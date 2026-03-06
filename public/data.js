@@ -161,6 +161,31 @@ const APP_DATA = {
           "Klient pyta o możliwość płatności ratalnej",
           "Klient żąda natychmiastowego wglądu do akt swojej sprawy"
         ]
+      },
+      "Obsługa telefoniczna": {
+        emoji: "📞",
+        scenariusze: [
+          "Klient dzwoni z pytaniem o cennik usług prawnych i jest oburzony stawkami godzinowymi",
+          "Klient dzwoni że sprawa miała być zakończona miesiąc temu i żąda wyjaśnień",
+          "Klient twierdzi że nikt z kancelarii nie oddzwonił przez tydzień",
+          "Klient dzwoni żądając pilnego połączenia z prawnikiem który jest na sali sądowej",
+          "Klient jest zdenerwowany bo dostał pismo z sądu i nie rozumie co ma zrobić",
+          "Klient pyta przez telefon o szanse wygranej w sprawie i żąda jednoznacznej odpowiedzi",
+          "Klient dzwoni że chce zmienić kancelarię i pyta jak odzyskać dokumenty",
+          "Klient twierdzi że przez telefon obiecano mu niższą stawkę niż na fakturze",
+          "Klient dzwoni z pretensjami że kancelaria przegrała sprawę i co teraz",
+          "Klient jest emocjonalny — właśnie dostał pozew o alimenty i dzwoni w panice",
+          "Klient pyta o termin kolejnej rozprawy i jest zły że nikt go wcześniej nie poinformował",
+          "Klient dzwoni żeby anulować umowę z kancelarią w połowie sprawy",
+          "Klient pyta o możliwość reprezentacji w sprawie karnej przez telefon",
+          "Klient twierdzi że prawnik ujawnił szczegóły jego sprawy osobom trzecim",
+          "Klient dzwoni z pytaniem o koszty apelacji i jest oburzony kwotą",
+          "Klient pyta dlaczego kancelaria nie odpowiada na jego maile od tygodnia",
+          "Klient jest starszy i zdezorientowany — nie rozumie co mu powiedziano na ostatnim spotkaniu",
+          "Klient dzwoni żeby umówić pilne spotkanie bo ma termin sądowy za 3 dni",
+          "Klient twierdzi że poprzedni prawnik w kancelarii prowadził sprawę lepiej",
+          "Klient pyta czy może nagrywać rozmowy z prawnikiem dla własnego bezpieczeństwa"
+        ]
       }
     }
   },
@@ -241,6 +266,31 @@ const APP_DATA = {
           "Klient jest zdenerwowany fakturą — inne kwoty niż oczekiwał",
           "Klient żąda natychmiastowego wglądu do karty leczenia",
           "Klient grozi skargą do Izby Lekarskiej jeśli nie dostanie terminu dziś"
+        ]
+      },
+      "Rejestracja telefoniczna": {
+        emoji: "📞",
+        scenariusze: [
+          "Klient dzwoni z silnym bólem zęba i żąda przyjęcia tego samego dnia",
+          "Klient pyta o ceny implantów przez telefon i jest oburzony pierwszą kwotą",
+          "Klient odwołuje wizytę na godzinę przed i kłóci się o zwrot kaucji",
+          "Klient twierdzi że przez telefon obiecano mu inny termin niż ma w systemie",
+          "Klient dzwoni żądając konkretnego lekarza który nie przyjmuje nowych pacjentów",
+          "Klient pyta o refundację NFZ i jest zły że gabinet nie ma kontraktu",
+          "Klient dzwoni po wizycie i twierdzi że ząb boli mocniej niż przed leczeniem",
+          "Klient jest zdenerwowany bo czeka na wyniki RTG od tygodnia",
+          "Klient pyta o procedurę leczenia kanałowego i ile to potrwa",
+          "Klient dzwoni że wypadła plomba i żąda przyjęcia natychmiastowego",
+          "Klient twierdzi że nikt nie oddzwonił po zostawieniu wiadomości w sekretarce",
+          "Klient pyta dlaczego ceny wzrosły od ostatniej wizyty",
+          "Klient dzwoni żeby umówić całą rodzinę na jeden dzień i jest zły na brak terminów",
+          "Klient pyta przez telefon czy może przyjść bez wcześniejszej rejestracji",
+          "Klient jest rodzicem dziecka z bólem zęba i żąda przyjęcia poza kolejką",
+          "Klient twierdzi że SMS z przypomnieniem o wizycie nie dotarł i domaga się przeprosin",
+          "Klient pyta o godziny otwarcia i jest zły że gabinet nie pracuje w soboty",
+          "Klient żąda przesłania wyników RTG mailem i jest zły że to niemożliwe",
+          "Klient twierdzi że poprzednia rejestratorka była milsza i bardziej pomocna",
+          "Klient grozi zmianą gabinetu jeśli nie dostanie terminu w ciągu 3 dni"
         ]
       }
     }
@@ -347,6 +397,31 @@ const APP_DATA = {
           "Klient żąda natychmiastowego audytu jego leczenia",
           "Klient chce podpisać specjalną klauzulę poufności z kliniką",
           "Klient twierdzi że manager obiecał mu coś czego nie ma w regulaminie"
+        ]
+      },
+      "Rejestracja telefoniczna": {
+        emoji: "📞",
+        scenariusze: [
+          "Klient dzwoni żądając wizyty tego samego dnia bo to pilne",
+          "Klient jest oburzony ceną wizyty prywatnej i porównuje z NFZ",
+          "Klient twierdzi że nikt nie oddzwonił po zostawieniu wiadomości",
+          "Klient odwołuje wizytę w ostatniej chwili i kłóci się o opłatę rezerwacyjną",
+          "Klient pyta o wyniki badań przez telefon i jest zły że nie może ich otrzymać",
+          "Klient chce konkretnego specjalisty który ma termin za 3 miesiące",
+          "Klient jest emocjonalny — rejestruje chorego bliskiego i płacze",
+          "Klient pyta dlaczego NFZ nie refunduje zleconego badania",
+          "Klient twierdzi że rejestracja podała mu błędny termin wizyty",
+          "Klient żąda kopii dokumentacji medycznej przesłanej mailem natychmiast",
+          "Klient jest zły na długi czas oczekiwania w kolejce telefonicznej",
+          "Klient pyta o możliwość teleporady zamiast wizyty osobistej",
+          "Klient twierdzi że wyniki badań zostały wysłane na błędny adres",
+          "Klient jest spóźniony na wizytę i pyta przez telefon czy jeszcze go przyjmą",
+          "Klient chce umówić kilku specjalistów na jeden dzień i jest zły na brak koordynacji",
+          "Klient grozi skargą do NFZ jeśli nie dostanie terminu szybciej",
+          "Klient pyta o ceny pakietów abonamentowych i negocjuje przez telefon",
+          "Klient twierdzi że lekarz nie zadzwonił z wynikami jak obiecał",
+          "Klient jest starszy i zdezorientowany — prosi o pomoc w interpretacji skierowania",
+          "Klient żąda potwierdzenia wizyty SMS-em bo wcześniej zapomnieli go poinformować"
         ]
       }
     }
@@ -510,6 +585,31 @@ const APP_DATA = {
           "Klient żąda żeby majster osobiście wykonał konkretny element",
           "Klient twierdzi że sprzęt używany przez ekipę jest zły i przestarzały"
         ]
+      },
+      "Obsługa telefoniczna": {
+        emoji: "📞",
+        scenariusze: [
+          "Klient dzwoni i pyta o wycenę remontu — oczekuje dokładnej kwoty przez telefon",
+          "Klient dzwoni że ekipa nie przybyła o umówionej godzinie i żąda wyjaśnień",
+          "Klient dzwoni z pretensjami że nikt nie oddzwonił przez 3 dni",
+          "Klient pyta o referencje i żąda numerów do poprzednich klientów",
+          "Klient dzwoni i grozi zerwaniem umowy jeśli roboty nie ruszą jutro",
+          "Klient pyta o status realizacji i twierdzi że nikt go na bieżąco nie informuje",
+          "Klient dzwoni że sąsiedzi skarżą się na hałas i brud ekipy",
+          "Klient dzwoni z pretensjami o fakturę — inne kwoty niż ustalono w umowie",
+          "Klient pyta czy firma posiada ubezpieczenie OC i żąda kopii polisy",
+          "Klient dzwoni po 18:00 z pilną sprawą i jest zły że nikt nie odbiera",
+          "Klient żąda rozmowy z kierownikiem budowy — nie chce rozmawiać z biurem",
+          "Klient twierdzi że przez telefon obiecano mu inną cenę niż w kosztorysie",
+          "Klient dzwoni żeby zmienić zakres robót i jest oburzony że to kosztuje więcej",
+          "Klient pyta o płatność ratalną i jest niezadowolony z warunków",
+          "Klient dzwoni że ekipa pozostawiła gruz na klatce schodowej",
+          "Klient jest zły że nie dostał faktury VAT tydzień po zakończeniu prac",
+          "Klient pyta o gwarancję na wykonane prace i żąda potwierdzenia pisemnego",
+          "Klient dzwoni sprawdzić czy ekipa pojawi się jutro mimo złej pogody",
+          "Klient prosi o pilny kontakt od szefa bo ma nagłą zmianę w projekcie",
+          "Klient dzwoni że znalazł tańszą ekipę i pyta czy firma może wyrównać cenę"
+        ]
       }
     }
   },
@@ -590,6 +690,31 @@ const APP_DATA = {
           "Klient żąda dedykowanego handlowca dostępnego 7 dni w tygodniu",
           "Klient po 2 latach współpracy nagle oznajmia że przechodzi do konkurencji",
           "Klient twierdzi że konkurencja ma ten sam produkt taniej i żąda wyrównania ceny"
+        ]
+      },
+      "Infolinia / Obsługa telefoniczna": {
+        emoji: "📞",
+        scenariusze: [
+          "Klient dzwoni że paczka nie dotarła mimo że tracking pokazuje doręczenie",
+          "Klient żąda natychmiastowego zwrotu pieniędzy przez telefon bez odesłania towaru",
+          "Klient dzwoni że dostał inny produkt niż zamawiał i żąda rozwiązania w 24h",
+          "Klient twierdzi że produkt jest uszkodzony i pyta czy musi robić zdjęcia",
+          "Klient grozi chargebackem jeśli nie dostanie odpowiedzi w ciągu godziny",
+          "Klient dzwoni że kupon rabatowy nie zadziałał po złożeniu zamówienia",
+          "Klient pyta dlaczego dostawa trwa 5 dni skoro sklep reklamuje 24h",
+          "Klient jest zły że musi odesłać produkt na własny koszt",
+          "Klient twierdzi że przez telefon obiecano mu darmową wysyłkę zwrotną",
+          "Klient dzwoni że dostał paczkę uszkodzoną przez kuriera i pyta co teraz",
+          "Klient chce zmienić adres dostawy po złożeniu zamówienia",
+          "Klient pyta dlaczego produkt jest tańszy na Allegro niż w oficjalnym sklepie",
+          "Klient dzwoni po raz trzeci w tej samej sprawie i jest coraz bardziej agresywny",
+          "Klient żąda odszkodowania bo produkt nie dotarł na urodziny syna",
+          "Klient pyta o status reklamacji złożonej 2 tygodnie temu i nie ma odpowiedzi",
+          "Klient twierdzi że opis produktu na stronie był inny niż to co dostał",
+          "Klient jest zły że program lojalnościowy nie naliczył punktów za ostatnie zamówienie",
+          "Klient żąda faktury korygującej i kłóci się o każdy szczegół przez telefon",
+          "Klient grozi wystawieniem negatywnych opinii na wszystkich portalach",
+          "Klient pyta dlaczego zwrot trwa 14 dni skoro sam przelew zajmuje 1 dzień"
         ]
       }
     }
@@ -672,6 +797,31 @@ const APP_DATA = {
           "Klient twierdzi że kelner przekazał złe preferencje smakowe do kuchni",
           "Klient żąda diety ketogenicznej ale nic w menu nie pasuje"
         ]
+      },
+      "Rezerwacje i zamówienia (telefon)": {
+        emoji: "📞",
+        scenariusze: [
+          "Klient rezerwuje stolik dla 10 osób i co chwilę zmienia liczbę gości",
+          "Klient dzwoni i pyta o danie którego nie ma w menu bo jadł je u znajomych",
+          "Klient odwołuje rezerwację na 30 minut przed i kłóci się o zwrot kaucji",
+          "Klient zamawia catering na imprezę firmową i negocjuje każdy szczegół ceny",
+          "Klient pyta o menu wegetariańskie i jest niezadowolony z dostępnych opcji",
+          "Klient twierdzi że umawiał się na stolik przy oknie i jest zły że nie ma miejsca",
+          "Klient dzwoni z reklamacją po wczorajszej wizycie — twierdzi że go rozbolał żołądek",
+          "Klient pyta o możliwość dowozu i jest zły na czas oczekiwania na dostawę",
+          "Klient żąda specjalnego menu urodzinowego dla dziecka którego restauracja nie oferuje",
+          "Klient twierdzi że na stronie internetowej jest inna cena niż przy zamawianiu telefonicznie",
+          "Klient pyta o wolne stoliki na sobotni wieczór i jest zły że nie ma miejsc",
+          "Klient organizuje urodziny i żąda personalizowanego tortu którego nie robicie",
+          "Klient dzwoni w trakcie szczytu serwisu i żąda że kelner podejdzie do telefonu",
+          "Klient jest alergikiem i przez 20 minut przepytuje obsługę o każdy składnik dania",
+          "Klient pyta czy może przyjść z własnym alkoholem na przyjęcie prywatne",
+          "Klient chce zarezerwować salę na wesele i oczekuje pełnej wyceny przez telefon",
+          "Klient grozi złą opinią za poprzednią wizytę i żąda vouchera kompensacyjnego",
+          "Klient pyta o promocje i zniżki których restauracja nie oferuje telefonicznie",
+          "Klient zamówił dowóz godzinę temu i dzwoni ze złością że jedzenie nie dotarło",
+          "Klient żąda faktury VAT na firmę za zamówienie telefoniczne — okazuje się skomplikowane"
+        ]
       }
     }
   },
@@ -753,6 +903,31 @@ const APP_DATA = {
           "Klient jest agresywny — przyjechał po kolizji i jest w szoku",
           "Klient twierdzi że warsztat zarysował auto na parkingu serwisu"
         ]
+      },
+      "Obsługa telefoniczna": {
+        emoji: "📞",
+        scenariusze: [
+          "Klient dzwoni że auto nie odpala i żąda holowania oraz przyjęcia do serwisu dzisiaj",
+          "Klient pyta o orientacyjny koszt naprawy skrzyni biegów i jest oburzony kwotą",
+          "Klient dzwoni że czeka na oddzwonienie z wyceną od 5 godzin",
+          "Klient twierdzi że przez telefon obiecano mu termin na jutro a w systemie jest za tydzień",
+          "Klient dzwoni po odbiór auta i pyta czy może zapłacić kartą — jest zły że tylko gotówka",
+          "Klient pyta o status naprawy i jest zły że nikt go nie informuje na bieżąco",
+          "Klient dzwoni że usterka wróciła 3 dni po naprawie i żąda bezpłatnej poprawki",
+          "Klient twierdzi że faktura jest wyższa niż ustalona wycena przez telefon",
+          "Klient dzwoni żeby przełożyć termin przeglądu i jest zły że najbliższy to za 3 tygodnie",
+          "Klient pyta czy może zostawić auto po godzinach i jest zły że nie ma takiej opcji",
+          "Klient dzwoni że kontrolka po naprawie znów się świeci i żąda natychmiastowego przyjazdu",
+          "Klient pyta przez telefon ile potrwa wymiana opon i jest zły na podany czas",
+          "Klient twierdzi że warsztat nie poinformował go o dodatkowych kosztach w trakcie naprawy",
+          "Klient dzwoni że ubezpieczyciel nie chce zapłacić i pyta co może zrobić warsztat",
+          "Klient jest agresywny bo właśnie miał stłuczkę i szuka warsztatu na teraz",
+          "Klient pyta o samochód zastępczy i jest zły że warsztat go nie zapewnia",
+          "Klient dzwoni żeby anulować rezerwację w ostatniej chwili i pyta o ewentualną opłatę",
+          "Klient twierdzi że po wymianie oleju poziom jest za niski i domaga się przyjazdu mechanika",
+          "Klient pyta dlaczego diagnostyka komputerowa jest płatna skoro nic nie naprawiają",
+          "Klient dzwoni że auto wydaje dziwny dźwięk i żąda że mechanik opisze mu co to przez telefon"
+        ]
       }
     }
   },
@@ -833,6 +1008,31 @@ const APP_DATA = {
           "Klient pyta dlaczego ta sama nieruchomość jest w dwóch agencjach w różnych cenach",
           "Klient żąda pilnie tłumaczenia dokumentów na inny język",
           "Klient jest zdezorientowany stanem prawnym nieruchomości i atakuje asystenta"
+        ]
+      },
+      "Obsługa telefoniczna": {
+        emoji: "📞",
+        scenariusze: [
+          "Klient dzwoni żeby umówić oglądanie i jest zły że agent ma termin dopiero za tydzień",
+          "Klient pyta o cenę mieszkania i jest oburzony wysokością prowizji agencji",
+          "Klient twierdzi że przez telefon agent opisał mieszkanie inaczej niż wygląda w rzeczywistości",
+          "Klient dzwoni że oferta którą oglądał zniknęła ze strony i żąda wyjaśnień",
+          "Klient jest sprzedającym i pyta dlaczego jego mieszkanie nie ma oglądań od miesiąca",
+          "Klient dzwoni po oglądaniu i żąda natychmiastowej decyzji o cenie bo ma inne oferty",
+          "Klient twierdzi że nikt nie oddzwonił po zostawieniu zapytania przez portal",
+          "Klient pyta o stan prawny nieruchomości i jest zdezorientowany odpowiedzią",
+          "Klient jest emocjonalny — właśnie odmówiono mu kredytu i szuka tańszej opcji",
+          "Klient pyta przez telefon czy agencja może obniżyć prowizję jeśli sam znalazł kupca",
+          "Klient twierdzi że agent pokazał jego ofertę bez zgody na obniżoną cenę",
+          "Klient dzwoni żeby zrezygnować z umowy z agencją przed upływem terminu",
+          "Klient pyta o możliwość oglądania mieszkania w weekend o konkretnej godzinie",
+          "Klient jest zły że agencja nie aktualizuje ofert na portalach na bieżąco",
+          "Klient pyta dlaczego ta sama nieruchomość jest tańsza w innej agencji",
+          "Klient dzwoni że sprzedający wycofał się z transakcji i co teraz z zaliczką",
+          "Klient pyta o możliwość negocjacji ceny przez telefon bez oglądania",
+          "Klient twierdzi że agent nie poinformował go o wadach prawnych nieruchomości",
+          "Klient dzwoni że chce kupić mieszkanie za gotówkę i żąda specjalnych warunków",
+          "Klient pyta o rynek najmu i jest zły że ceny wynajmu są tak wysokie"
         ]
       }
     }
@@ -996,6 +1196,31 @@ const APP_DATA = {
           "Klient twierdzi że sklep naruszył jego dane z karty lojalnościowej",
           "Klient żąda specjalnych warunków zakupu bo jest stałym klientem od lat"
         ]
+      },
+      "Obsługa telefoniczna / Infolinia": {
+        emoji: "📞",
+        scenariusze: [
+          "Klient dzwoni i pyta czy dany produkt jest dostępny w sklepie stacjonarnym",
+          "Klient pyta o cenę produktu i jest oburzony że jest wyższa niż w sklepie internetowym",
+          "Klient dzwoni z reklamacją produktu zakupionego tydzień temu i żąda natychmiastowego zwrotu",
+          "Klient pyta o możliwość telefonicznej rezerwacji produktu i jest zły że to niemożliwe",
+          "Klient twierdzi że przez telefon obiecano mu promocję która już nie obowiązuje",
+          "Klient pyta o godziny otwarcia i denerwuje się że różnią się od tych na Google",
+          "Klient dzwoni sprawdzić status zamówionego produktu którego nie ma na stanie",
+          "Klient pyta o procedurę zwrotu przez kuriera i jest zły na jej skomplikowanie",
+          "Klient żąda rozmowy z kierownikiem bo sprzedawca był jego zdaniem nieuprzejmy",
+          "Klient pyta o dostępność konkretnego rozmiaru lub koloru produktu",
+          "Klient twierdzi że produkt który kupił wczoraj jest już wadliwy i żąda wymiany dziś",
+          "Klient dzwoni z pytaniem o montaż lub instalację zakupionego sprzętu",
+          "Klient pyta o paragon elektroniczny i ma problem z jego pobraniem z systemu",
+          "Klient jest zły że dostał SMS o gotowości zamówienia a produktu nie ma na miejscu",
+          "Klient pyta o możliwość wystawienia faktury VAT na firmę i żąda korekty",
+          "Klient dzwoni żeby zamówić produkt z dostawą do domu i targuje się o cenę wysyłki",
+          "Klient pyta o gwarancję rozszerzoną i negocjuje jej cenę przez telefon",
+          "Klient twierdzi że opis produktu na stronie jest inny niż towar który dostał",
+          "Klient dzwoni po zamknięciu sklepu i jest zły że nikt nie odbiera",
+          "Klient pyta o program lojalnościowy i jest niezadowolony że punkty przepadły"
+        ]
       }
     }
   },
@@ -1076,6 +1301,31 @@ const APP_DATA = {
           "Klient jest niezadowolony z metodyki — chce przejść z Agile na waterfall w połowie",
           "Klient żąda szczegółowego raportu czasu pracy każdego członka zespołu",
           "Klient twierdzi że poprzedni PM zostawił projekt w chaosie i nowy musi to naprawić za darmo"
+        ]
+      },
+      "Wsparcie klienta (telefon)": {
+        emoji: "📞",
+        scenariusze: [
+          "Klient dzwoni że kampania reklamowa przestała działać i żąda natychmiastowej reakcji",
+          "Klient pyta o wyniki kampanii i jest oburzony że obsługa nie może podać ich od razu",
+          "Klient dzwoni że na jego stronie jest błąd i żąda naprawy w ciągu godziny",
+          "Klient twierdzi że przez telefon obiecano mu inne wyniki KPI niż osiągnięto",
+          "Klient dzwoni w niedzielę wieczór z pilną sprawą dotyczącą kampanii",
+          "Klient pyta o wycenę nowego projektu i jest oburzony pierwszą przybliżoną kwotą",
+          "Klient twierdzi że nie dostaje cotygodniowych raportów które miał otrzymywać",
+          "Klient dzwoni sprawdzić czy agencja zrealizowała jego ostatnią prośbę mailową",
+          "Klient jest zły że musi rozmawiać z inną osobą niż jego stały account manager",
+          "Klient pyta o możliwość pilnego spotkania bo przełożony żąda od niego wyników",
+          "Klient twierdzi że agencja używa jego materiałów graficznych bez zgody",
+          "Klient dzwoni że widział reklamę u konkurencji i pyta czy agencja ich obsługuje",
+          "Klient pyta o przedłużenie umowy i negocjuje warunki agresywnie przez telefon",
+          "Klient twierdzi że faktura jest wyższa niż oczekiwał i odmawia zapłaty",
+          "Klient dzwoni że dostał negatywny komentarz w sieci i żąda natychmiastowego działania",
+          "Klient pyta o dostęp do kont reklamowych i jest zły że agencja go nie przyznaje",
+          "Klient twierdzi że strona wypadła z wyników Google i obwinia agencję za SEO",
+          "Klient dzwoni sprawdzić status projektu który miał być gotowy wczoraj",
+          "Klient pyta o wstrzymanie kampanii na czas urlopu bez naliczania opłat",
+          "Klient twierdzi że konkurencja ma lepsze wyniki i poważnie rozważa zmianę agencji"
         ]
       }
     }
@@ -1158,6 +1408,31 @@ const APP_DATA = {
           "Klientka żąda żeby recepcja przypilnowała że fryzjerka wykona dokładnie to co chce",
           "Klientka twierdzi że salon jest droższy niż rok temu i żąda wyjaśnienia"
         ]
+      },
+      "Umawianie wizyt (telefon)": {
+        emoji: "📞",
+        scenariusze: [
+          "Klientka dzwoni żądając terminu na jutro i jest zła że nie ma wolnych miejsc",
+          "Klientka pyta o cenę koloryzacji i jest oburzona że nie można podać dokładnej kwoty przez telefon",
+          "Klientka odwołuje wizytę na godzinę przed i kłóci się o opłatę za odwołanie",
+          "Klientka twierdzi że przez telefon obiecano jej inną fryzjerkę niż jest zapisana",
+          "Klientka pyta przez telefon czy fryzjerka potrafi zrobić konkretny trudny styl",
+          "Klientka dzwoni że jest w drodze i spóźni się 30 minut — pyta czy i tak ją przyjmą",
+          "Klientka twierdzi że nie dostała SMS przypomnienia i teraz straciła termin",
+          "Klientka chce umówić się na kompletną metamorfozę i jest zła że to zajmie kilka godzin",
+          "Klientka pyta o godziny otwarcia i jest zła że salon jest nieczynny w niedzielę",
+          "Klientka żąda konkretnej godziny a jedyne wolne miejsca jej nie pasują",
+          "Klientka dzwoni z pretensjami że fryzura z ostatniej wizyty nie trzyma się już po tygodniu",
+          "Klientka pyta czy może przyjść z córką i zamówić dwie usługi jednocześnie",
+          "Klientka twierdzi że na stronie są inne ceny niż podane przez telefon",
+          "Klientka żąda żeby recepcja opisała przez telefon jak wygląda dana technika koloryzacji",
+          "Klientka jest zła że jej ulubiona stylistka już nie pracuje w salonie",
+          "Klientka dzwoni żeby upewnić się że fryzjerka zna technikę którą przyniosła na zdjęciu",
+          "Klientka pyta o możliwość płatności ratalnej za drogi zabieg keratynowy",
+          "Klientka grozi złą opinią jeśli salon nie przyjmie jej bez terminu dziś",
+          "Klientka twierdzi że znajoma dostała rabat a jej nikt nie zaproponował",
+          "Klientka chce zamówić wizytę domową fryzjerki i jest zła że salon nie świadczy takich usług"
+        ]
       }
     }
   },
@@ -1238,6 +1513,31 @@ const APP_DATA = {
           "Klient twierdzi że serwisant był nieuprzejmy lub niedbały",
           "Klient żąda rozszerzenia gwarancji po jej wygaśnięciu bez dopłaty",
           "Klient twierdzi że firma instalacyjna zbankrutowała i nie ma komu reklamować — szuka pomocy u serwisanta"
+        ]
+      },
+      "Infolinia / Obsługa telefoniczna": {
+        emoji: "📞",
+        scenariusze: [
+          "Klient dzwoni że instalacja przestała działać i żąda natychmiastowego przyjazdu ekipy",
+          "Klient pyta o wycenę instalacji i oczekuje dokładnej kwoty przez telefon bez wizyty",
+          "Klient dzwoni z pytaniem o dofinansowania i jest zdezorientowany procedurą wniosku",
+          "Klient twierdzi że rachunki za prąd nie spadły po montażu i żąda wyjaśnień",
+          "Klient pyta o termin montażu i jest zły że musi czekać 6 tygodni",
+          "Klient twierdzi że przez telefon obiecano mu inny czas zwrotu z inwestycji niż w umowie",
+          "Klient dzwoni po burzy że panel jest uszkodzony i pyta czy to wchodzi w gwarancję",
+          "Klient pyta o stan realizacji zamówienia i jest zły że nikt go nie informuje na bieżąco",
+          "Klient twierdzi że aplikacja do monitoringu instalacji nie działa i żąda pomocy",
+          "Klient dzwoni że sąsiad dostał wyższe dofinansowanie i pyta dlaczego on nie",
+          "Klient pyta o możliwość rozszerzenia instalacji i jest zły na wycenę rozbudowy",
+          "Klient twierdzi że falownik wydaje dziwny dźwięk i żąda wizyty serwisowej dzisiaj",
+          "Klient pyta o możliwość przesunięcia terminu montażu bo właśnie remontuje dach",
+          "Klient jest oburzony że firma zmieniła model paneli na równoważny bez jego zgody",
+          "Klient dzwoni żeby zrezygnować z umowy i pyta o warunki i koszty odstąpienia",
+          "Klient pyta dlaczego mikroinwertery są droższe niż zwykły falownik centralny",
+          "Klient twierdzi że nikt nie oddzwonił po złożeniu zapytania przez formularz online",
+          "Klient dzwoni po odbiorze instalacji i pyta jak prawidłowo odczytać licznik dwukierunkowy",
+          "Klient jest zły że ekipa montażowa nie posprzątała po sobie po zakończeniu prac",
+          "Klient pyta o możliwość połączenia instalacji PV z pompą ciepła i jest zły na wycenę"
         ]
       }
     }
