@@ -341,10 +341,13 @@ function ChatView({industry,position,scenario,client,gender,age,firm,onBack}){
   const bottomRef=useRef(null);
   const recognitionRef=useRef(null);
   const audioRef=useRef(null);
+  const voiceModeRef=useRef(false);
   const voiceParams=getVoiceParams(gender||"female",age||"middle",client.id);
 
+  useEffect(()=>{voiceModeRef.current=voiceMode;},[voiceMode]);
+
   async function playTTS(text){
-    if(!voiceMode||!text) return;
+    if(!voiceModeRef.current||!text) return;
     if(audioRef.current){audioRef.current.pause();audioRef.current=null;}
     setIsSpeaking(true);
     const audio=await speakText(text,voiceParams.voice,voiceParams.speed);
@@ -396,7 +399,8 @@ function ChatView({industry,position,scenario,client,gender,age,firm,onBack}){
   }
 
   async function sendMessage(){
-    if(!input.trim()||loading)return;
+    if(!input.trim()||loading||isSpeaking)return;
+    if(recognitionRef.current){recognitionRef.current.stop();setIsRecording(false);}
     const userMsg=input.trim();
     setInput("");
     const newMsgs=[...messages,{role:"user",content:userMsg}];
@@ -441,12 +445,12 @@ function ChatView({industry,position,scenario,client,gender,age,firm,onBack}){
           <span className="tag-g" style={{flexShrink:0}}>{client.label}</span>
           {isSpeaking&&(
             <div className="speaking-wave" style={{flexShrink:0}}>
-              <span style={{height:4}}/><span style={{height:8}}/><span style={{height:14}}/><span style={{height:8}}/><span style={{height:4}}/>
+              <span/><span/><span/><span/><span/>
             </div>
           )}
           <button className={`voice-btn${voiceMode?" active":""}`} title={voiceMode?"Wylącz tryb głosowy":"Włącz tryb głosowy"}
             onClick={()=>{if(voiceMode){stopSpeaking();}setVoiceMode(!voiceMode);}}>
-            {voiceMode?"\uD83D\uDCDE":"📞"}
+            {voiceMode?"📵":"📞"}
             <span>{voiceMode?"Głos wl.":"Głosowy"}</span>
           </button>
           {voiceMode&&isSpeaking&&(
@@ -502,6 +506,11 @@ function ChatView({industry,position,scenario,client,gender,age,firm,onBack}){
                     if(isRecording){stopRecognition();return;}
                     startRecognition(function(transcript){
                       setInput(transcript);
+                      // auto-wyslij po rozpoznaniu
+                      setTimeout(()=>{
+                        document.getElementById("voice-send-btn")&&
+                        document.getElementById("voice-send-btn").click();
+                      },80);
                     });
                   }}
                   title={isRecording?"Zatrzymaj nagrywanie":"Mów (kliknij raz, mów, kliknij ponownie)"}
@@ -512,12 +521,12 @@ function ChatView({industry,position,scenario,client,gender,age,firm,onBack}){
               <textarea className="inp" placeholder={voiceMode?"Mów lub wpisz swoją odpowiedź... (Enter = wyślij)":"Twoja odpowiedz jako pracownik... (Enter = wyslij, Shift+Enter = nowa linia)"} value={input}
                 onChange={function(e){setInput(e.target.value);}}
                 onKeyDown={function(e){if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();sendMessage();}}}
-                rows={2} style={{resize:"none",flex:1}}/>
-              <button className="btn-primary" onClick={sendMessage} disabled={loading||!input.trim()} style={{padding:".5rem 1rem",alignSelf:"stretch",minWidth:56}}>&#8629;</button>
+                rows={2} style={{resize:"none",flex:1,opacity:isSpeaking?0.5:1}} disabled={isSpeaking}/>
+              <button id="voice-send-btn" className="btn-primary" onClick={sendMessage} disabled={loading||isSpeaking||!input.trim()} style={{padding:".5rem 1rem",alignSelf:"stretch",minWidth:56}}>&#8629;</button>
             </div>
             {voiceMode&&(
               <div style={{textAlign:"center",marginTop:".4rem",color:"rgba(255,255,255,.3)",fontSize:".7rem"}}>
-                {isRecording?"🔴 Nagrywam... (kliknij mikrofon aby zatrzymać)":isSpeaking?"🔊 Klient mówi...":"Głos: "+voiceParams.voice+" • prędkość: "+voiceParams.speed+"x"}
+                {isRecording?"🔴 Nagrywam... (kliknij mikrofon aby zatrzymać)":isSpeaking?"🔊 Klient mówi... (kliknij ■ aby przerwać)":("🎙 Gotowy • głos: "+voiceParams.voice+(gender==="male"?" ♂":" ♀")+" • "+voiceParams.speed+"x • kliknij 🎤 i mów")}
               </div>
             )}
           </div>
