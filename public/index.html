@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Symulator Trudnych Klientow | AI Trening</title>
+<script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="data.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#00301A;font-family:'DM Sans',sans-serif;min-height:100vh}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:#111}::-webkit-scrollbar-thumb{background:#333;border-radius:3px}
+.card{background:rgba(255,255,255,.05);border:1px solid rgba(0,182,72,.2);border-radius:10px;padding:.75rem 1rem;cursor:pointer;transition:all .2s}
+.card:hover{background:rgba(0,182,72,.12);border-color:#00B648;transform:translateY(-1px)}
+.card.selected{background:rgba(0,182,72,.2);border-color:#00B648;box-shadow:0 0 0 2px #00B648}
+.card-sm{background:rgba(255,255,255,.04);border:1px solid rgba(0,182,72,.15);border-radius:8px;padding:.55rem .8rem;cursor:pointer;transition:all .15s}
+.card-sm:hover{background:rgba(0,182,72,.1);border-color:#00B648}
+.card-sm.selected{background:rgba(0,182,72,.18);border-color:#00B648;box-shadow:0 0 0 1.5px #00B648}
+.grid2{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:.55rem}
+.grid3{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:.5rem}
+.grid-industry{display:grid;grid-template-columns:repeat(auto-fill,minmax(175px,1fr));gap:.55rem}
+.btn-primary{background:#00B648;color:#00301A;border:none;padding:.85rem 2.5rem;font-size:1rem;font-family:'DM Sans',sans-serif;font-weight:700;border-radius:8px;cursor:pointer;transition:all .2s}
+.btn-primary:hover:not(:disabled){background:#00d455;transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,182,72,.4)}
+.btn-primary:disabled{opacity:.3;cursor:not-allowed}
+.btn-back{background:transparent;border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.5);padding:.4rem .8rem;border-radius:6px;cursor:pointer;font-size:.78rem;font-family:'DM Sans',sans-serif;transition:all .15s}
+.btn-back:hover{border-color:rgba(255,255,255,.4);color:rgba(255,255,255,.8)}
+.inp{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:8px;padding:.65rem .9rem;color:#fff;font-family:'DM Sans',sans-serif;font-size:.88rem;width:100%;outline:none;transition:border .2s}
+.inp:focus{border-color:#00B648}.inp::placeholder{color:rgba(255,255,255,.25)}
+.msg-c{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:12px 12px 12px 4px;padding:.85rem 1rem;max-width:78%;align-self:flex-start}
+.msg-w{background:#003d20;border:1px solid rgba(0,182,72,.4);border-radius:12px 12px 4px 12px;padding:.85rem 1rem;max-width:78%;align-self:flex-end}
+.sec{background:#111;border:1px solid #222;border-radius:12px;padding:1.25rem;margin-bottom:.9rem}
+.tag-g{background:rgba(0,182,72,.15);color:#00B648;padding:.25rem .65rem;border-radius:20px;font-size:.76rem;display:inline-block;margin:.2rem;border:1px solid rgba(0,182,72,.3)}
+.tag-y{background:rgba(251,191,36,.1);color:#fbbf24;padding:.25rem .65rem;border-radius:20px;font-size:.76rem;display:inline-block;margin:.2rem;border:1px solid rgba(251,191,36,.3)}
+.mg{border-left:3px solid #00B648;padding-left:.75rem;margin-bottom:.35rem}
+.mb{border-left:3px solid #ef4444;padding-left:.75rem;margin-bottom:.35rem}
+.lbl{color:#00B648;font-size:.7rem;letter-spacing:2px;text-transform:uppercase;margin-bottom:.6rem}
+.dot{display:inline-block;animation:dt 1.2s infinite}
+@keyframes dt{0%,100%{opacity:.2}50%{opacity:1}}
+.scenario-select{background:#1a1a1a;border:1px solid rgba(0,182,72,.3);border-radius:8px;color:#fff;font-family:'DM Sans',sans-serif;font-size:.85rem;padding:.65rem .9rem;width:100%;outline:none;cursor:pointer;transition:border .2s}
+.scenario-select:focus{border-color:#00B648}
+.scenario-select option{background:#1a1a1a;color:#fff}
+.voice-btn{background:rgba(255,255,255,.06);border:1px solid rgba(0,182,72,.2);border-radius:8px;padding:.45rem .7rem;cursor:pointer;color:rgba(255,255,255,.7);font-family:'DM Sans',sans-serif;font-size:.78rem;transition:all .15s;display:flex;align-items:center;gap:.35rem}
+.voice-btn:hover{background:rgba(0,182,72,.1);border-color:#00B648;color:#fff}
+.voice-btn.active{background:rgba(0,182,72,.18);border-color:#00B648;color:#00B648;box-shadow:0 0 0 2px rgba(0,182,72,.2)}
+.mic-btn{background:rgba(239,68,68,.12);border:2px solid rgba(239,68,68,.35);border-radius:50%;width:46px;height:46px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.2rem;transition:all .2s;flex-shrink:0}
+.mic-btn:hover:not(:disabled){background:rgba(239,68,68,.22);border-color:#ef4444}
+.mic-btn.recording{background:rgba(239,68,68,.35);border-color:#ef4444;animation:mPulse 1s infinite}
+.mic-btn:disabled{opacity:.3;cursor:not-allowed}
+@keyframes mPulse{0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,.5)}50%{box-shadow:0 0 0 10px rgba(239,68,68,0)}}
+.speaking-wave{display:flex;gap:3px;align-items:flex-end;height:18px;padding:0 4px}
+.speaking-wave span{width:3px;background:#00B648;border-radius:2px;display:inline-block}
+.speaking-wave span:nth-child(1){animation:wv .7s ease-in-out infinite}
+.speaking-wave span:nth-child(2){animation:wv .7s ease-in-out infinite .1s}
+.speaking-wave span:nth-child(3){animation:wv .7s ease-in-out infinite .2s}
+.speaking-wave span:nth-child(4){animation:wv .7s ease-in-out infinite .3s}
+.speaking-wave span:nth-child(5){animation:wv .7s ease-in-out infinite .4s}
+@keyframes wv{0%,100%{height:4px}50%{height:16px}}
+.profile-card{background:rgba(255,255,255,.04);border:1px solid rgba(0,182,72,.15);border-radius:8px;padding:.5rem .7rem;cursor:pointer;transition:all .15s;text-align:center}
+.profile-card:hover{background:rgba(0,182,72,.08);border-color:#00B648}
+.profile-card.selected{background:rgba(0,182,72,.15);border-color:#00B648;box-shadow:0 0 0 1.5px #00B648}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const {useState,useRef,useEffect}=React;
+
+const CLIENTS=[
+  {id:"agresywny",label:"Agresywny",desc:"Podniesiony ton, grozi, ostre slowa"},
+  {id:"roszczeniowy",label:"Roszczeniowy",desc:"Oczekuje wyjatkowego traktowania"},
+  {id:"nieufny",label:"Nieufny",desc:"Obawia sie ukrytych kosztow i bledow"},
+  {id:"oszczedny",label:"Oszczedny",desc:"Skupiony wylacznie na cenie"},
+  {id:"negocjujacy",label:"Negocjujacy",desc:"Stale probuje obnizyc cene"},
+  {id:"emocjonalny",label:"Emocjonalny",desc:"Reaguje uczuciami, stresem, plataczem"},
+  {id:"niezdecydowany",label:"Niezdecydowany",desc:"Waha sie, potrzebuje duzo czasu"},
+  {id:"sceptyczny",label:"Sceptyczny",desc:"Watpi w kazde wyjasnienie"},
+  {id:"dociekliwy",label:"Dociekliwy",desc:"Zasypuje pytaniami, drazy szczegoly"},
+  {id:"milczacy",label:"Milczacy",desc:"Odpowiada krotko, nic nie ulatwia"},
+];
+
+// Mapowanie głosów: płeć × wiek → głos OpenAI TTS
+const VOICE_MAP={
+  female:{young:"nova",middle:"shimmer",senior:"alloy"},
+  male:  {young:"echo", middle:"fable",  senior:"onyx"}
+};
+// Prędkość mówienia wg charakteru klienta
+const SPEED_MAP={
+  agresywny:1.15,roszczeniowy:1.05,nieufny:0.88,oszczedny:1.0,
+  negocjujacy:1.1,emocjonalny:0.92,niezdecydowany:0.80,
+  sceptyczny:0.88,dociekliwy:1.2,milczacy:0.75
+};
+function getVoiceParams(gender,age,clientId){
+  const voice=(VOICE_MAP[gender]||VOICE_MAP.female)[age]||"nova";
+  const speed=SPEED_MAP[clientId]||1.0;
+  return {voice,speed};
+}
+async function speakText(text,voice,speed){
+  try{
+    const r=await fetch("/api/tts",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({text,voice,speed})});
+    if(!r.ok) return null;
+    const blob=await r.blob();
+    const url=URL.createObjectURL(blob);
+    const audio=new Audio(url);
+    return audio;
+  }catch(e){return null;}
+}
+async function callAPI(body){
+  const r=await fetch("/api/chat",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
+  return r.json();
+}
+
+function sysPrompt(client,scenario,industry,position,firm){
+  const firmInfo=firm.name
+    ?`Dane firmy:\n- Nazwa: ${firm.name}${firm.boss?'\n- Szef/Wlasciciel: '+firm.boss:''}${firm.phone?'\n- Telefon: '+firm.phone:''}${firm.address?'\n- Adres: '+firm.address:''}
+Klient ZNA te dane i moze sie do nich odwolywac w rozmowie.`
+    :`Firma z branzy: ${industry}.`;
+  return `Jestes klientem prowadzacym rozmowe z pracownikiem firmy.
+Branza firmy: ${industry}
+Stanowisko pracownika: ${position}
+
+${firmInfo}
+
+Typ klienta: ${client.label} - ${client.desc}
+Scenariusz: ${scenario}
+
+ZASADY:
+- Zachowuj sie jak PRAWDZIWY polski klient z tym problemem
+- Uzywaj naturalnego, potocznego jezyka (mozesz byc niegramatyczny)
+- ESKALUJ gdy pracownik: unika tematu, mowi ogolnikami, jest arogancki
+- LAGODNIEJ gdy pracownik: jest empatyczny, daje konkretne rozwiazanie
+- Reaguj na TRESC odpowiedzi - nie tylko ton
+- Mozesz zadac przelozonego jesli rozmawiasz z nizszym pracownikiem
+- Max 8-10 wymian, nie rozwiazuj problemu sam
+
+ZACZNIJ: od razu opisz problem i emocje. Bez formalnego powitania.`;
+}
+
+function evalPrompt(industry,position,scenario,messages){
+  const conv=messages.map(m=>(m.role==='assistant'?'KLIENT: ':m.role==='user'?'PRACOWNIK: ':'')+m.content).join('\n\n');
+  return `Jestes ekspertem od obslugi klienta w branzy: ${industry}.
+Ocen odpowiedz pracownika (${position}).
+Scenariusz: ${scenario}
+
+ROZMOWA:
+${conv}
+
+Zwroc WYLACZNIE JSON (bez markdown):
+{"score":<0-10>,"mocne":["..."],"slabe":["..."],"sugestia":"...","reakcja_klienta":"eskalacja|deeskalacja|neutralna"}
+score: 0-3=slabe, 4-6=przecietne, 7-8=dobre, 9-10=wzorcowe.
+Ocen: empatia, konkretnosc, profesjonalizm, znajomosc branzy.`;
+}
+
+function StepIndustry({onSelect}){
+  const industries=Object.keys(APP_DATA);
+  return (
+    <div style={{maxWidth:900,margin:"0 auto",padding:"1.5rem"}}>
+      <div style={{textAlign:"center",marginBottom:"1.8rem"}}>
+        <div style={{fontFamily:"DM Serif Display",color:"#00B648",fontSize:"1.9rem",marginBottom:".4rem"}}>Symulator Trudnych Klientow</div>
+        <div style={{color:"rgba(255,255,255,.4)",fontSize:".85rem"}}>Wybierz branze firmy, ktora reprezentujesz</div>
+      </div>
+      <div className="grid-industry">
+        {industries.map(ind=>(
+          <div key={ind} className="card" onClick={()=>onSelect(ind)} style={{textAlign:"center",padding:"1rem .8rem"}}>
+            <div style={{fontSize:"1.6rem",marginBottom:".4rem"}}>{APP_DATA[ind].emoji}</div>
+            <div style={{color:"#fff",fontSize:".85rem",fontWeight:500}}>{ind}</div>
+            <div style={{color:"rgba(255,255,255,.35)",fontSize:".72rem",marginTop:".25rem"}}>
+              {Object.keys(APP_DATA[ind].stanowiska).length} stanowiska
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function StepPosition({industry,onSelect,onBack}){
+  const positions=Object.keys(APP_DATA[industry].stanowiska);
+  return (
+    <div style={{maxWidth:740,margin:"0 auto",padding:"1.5rem"}}>
+      <button className="btn-back" onClick={onBack} style={{marginBottom:"1.2rem"}}>&#8592; Branze</button>
+      <div style={{marginBottom:"1.2rem",display:"flex",alignItems:"center",gap:".6rem"}}>
+        <span style={{fontSize:"1.5rem"}}>{APP_DATA[industry].emoji}</span>
+        <div>
+          <div style={{color:"#00B648",fontWeight:600,fontSize:"1.05rem"}}>{industry}</div>
+          <div style={{color:"rgba(255,255,255,.4)",fontSize:".82rem"}}>Wybierz swoje stanowisko</div>
+        </div>
+      </div>
+      <div className="grid2">
+        {positions.map(pos=>(
+          <div key={pos} className="card" onClick={()=>onSelect(pos)} style={{display:"flex",alignItems:"center",gap:".7rem"}}>
+            <span style={{fontSize:"1.3rem"}}>{APP_DATA[industry].stanowiska[pos].emoji}</span>
+            <div>
+              <div style={{color:"#fff",fontSize:".88rem",fontWeight:500}}>{pos}</div>
+              <div style={{color:"rgba(255,255,255,.35)",fontSize:".72rem",marginTop:".15rem"}}>
+                {APP_DATA[industry].stanowiska[pos].scenariusze.length} scenariuszy
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function StepSetup({industry,position,onStart,onBack}){
+  const scenarios=APP_DATA[industry].stanowiska[position].scenariusze;
+  const [scenIdx,setScenIdx]=useState(0);
+  const [isCustom,setIsCustom]=useState(false);
+  const [customText,setCustomText]=useState("");
+  const [client,setClient]=useState(null);
+  const [gender,setGender]=useState("female");
+  const [age,setAge]=useState("middle");
+  const [firm,setFirm]=useState({name:"",boss:"",phone:"",address:""});
+  const [showFirm,setShowFirm]=useState(false);
+
+  function handleScenChange(e){
+    if(e.target.value==="__custom__"){setIsCustom(true);}
+    else{setIsCustom(false);setScenIdx(Number(e.target.value));}
+  }
+
+  const activeScenario=isCustom?customText.trim():scenarios[scenIdx];
+  const canStart=!!client&&activeScenario.length>0;
+
+  return (
+    <div style={{maxWidth:840,margin:"0 auto",padding:"1.5rem"}}>
+      <button className="btn-back" onClick={onBack} style={{marginBottom:"1.2rem"}}>&#8592; Stanowiska</button>
+      <div style={{background:"#111",border:"1px solid #222",borderRadius:12,padding:".9rem 1.2rem",marginBottom:"1rem",display:"flex",gap:".6rem",alignItems:"center"}}>
+        <span style={{fontSize:"1.3rem"}}>{APP_DATA[industry].emoji}</span>
+        <div>
+          <div style={{color:"rgba(255,255,255,.4)",fontSize:".72rem",textTransform:"uppercase",letterSpacing:"1px"}}>{industry}</div>
+          <div style={{color:"#fff",fontWeight:600,fontSize:".92rem"}}>{position}</div>
+        </div>
+      </div>
+
+      <div className="sec">
+        <div className="lbl">Scenariusz</div>
+        <select className="scenario-select" value={isCustom?"__custom__":scenIdx} onChange={handleScenChange}>
+          {scenarios.map((s,i)=><option key={i} value={i}>{i+1}. {s}</option>)}
+          <option value="__custom__">✏️ Wpisz własny scenariusz...</option>
+        </select>
+        {isCustom?(
+          <div style={{marginTop:".75rem"}}>
+            <textarea
+              className="inp"
+              placeholder="Opisz sytuację, np. 'Klient dzwoni z pretensją, że faktura za ostatni miesiąc jest o 30% wyższa niż umówiona cena...'"
+              value={customText}
+              onChange={e=>setCustomText(e.target.value)}
+              rows={4}
+              style={{resize:"vertical",lineHeight:1.55,padding:".75rem .9rem"}}
+            />
+            {customText.trim().length===0&&(
+              <div style={{color:"rgba(255,100,100,.7)",fontSize:".75rem",marginTop:".4rem"}}>⚠ Wpisz treść scenariusza aby kontynuować</div>
+            )}
+          </div>
+        ):(
+          <div style={{marginTop:".75rem",background:"rgba(0,182,72,.07)",border:"1px solid rgba(0,182,72,.2)",borderRadius:8,padding:".7rem .9rem",color:"rgba(255,255,255,.75)",fontSize:".84rem",lineHeight:1.5}}>
+            {scenarios[scenIdx]}
+          </div>
+        )}
+      </div>
+
+      <div className="sec">
+        <div className="lbl">Typ klienta</div>
+        <div className="grid3">
+          {CLIENTS.map(c=>(
+            <div key={c.id} className={`card-sm${client&&client.id===c.id?" selected":""}`} onClick={()=>setClient(c)}>
+              <div style={{color:"#fff",fontSize:".82rem",fontWeight:500}}>{c.label}</div>
+              <div style={{color:"rgba(255,255,255,.38)",fontSize:".72rem",marginTop:".15rem"}}>{c.desc}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="sec">
+        <div className="lbl">Profil głosowy klienta <span style={{color:"rgba(255,255,255,.3)",fontWeight:400,textTransform:"none",letterSpacing:0,fontSize:".72rem"}}>(tryb telefoniczny)</span></div>
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:".5rem",marginBottom:".6rem"}}>
+          {[
+            {id:"female",label:"Kobieta",icon:"👩"},
+            {id:"male",  label:"Mężczyzna",icon:"👨"}
+          ].map(g=>(
+            <div key={g.id} className={`profile-card${gender===g.id?" selected":""}`} onClick={()=>setGender(g.id)}>
+              <div style={{fontSize:"1.3rem"}}>{g.icon}</div>
+              <div style={{color:"#fff",fontSize:".8rem",fontWeight:500,marginTop:".2rem"}}>{g.label}</div>
+            </div>
+          ))}
+        </div>
+        <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:".5rem"}}>
+          {[
+            {id:"young", label:"Młody",   sub:"20-35"},
+            {id:"middle",label:"Średnio",  sub:"35-55"},
+            {id:"senior",label:"Starszy", sub:"55+"}
+          ].map(a=>(
+            <div key={a.id} className={`profile-card${age===a.id?" selected":""}`} onClick={()=>setAge(a.id)}>
+              <div style={{color:"#fff",fontSize:".8rem",fontWeight:500}}>{a.label}</div>
+              <div style={{color:"rgba(255,255,255,.38)",fontSize:".7rem"}}>{a.sub}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="sec">
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:showFirm?".8rem":"0"}}>
+          <div className="lbl" style={{marginBottom:0}}>Dane firmy <span style={{color:"rgba(255,255,255,.3)",fontWeight:400,textTransform:"none",letterSpacing:0,fontSize:".72rem"}}>(opcjonalne)</span></div>
+          <button className="btn-back" onClick={()=>setShowFirm(!showFirm)} style={{fontSize:".75rem"}}>{showFirm?"Ukryj":"Wypelnij"}</button>
+        </div>
+        {showFirm&&(
+          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:".6rem"}}>
+            {[{k:"name",ph:"Nazwa firmy"},{k:"boss",ph:"Szef / wlasciciel"},{k:"phone",ph:"Telefon"},{k:"address",ph:"Adres"}].map(({k,ph})=>(
+              <input key={k} className="inp" placeholder={ph} value={firm[k]} onChange={e=>setFirm({...firm,[k]:e.target.value})}/>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <div style={{textAlign:"center",marginTop:".5rem"}}>
+        <button className="btn-primary" disabled={!canStart} onClick={()=>onStart({scenario:activeScenario,client,gender,age,firm})}>
+          Rozpocznij symulacje
+        </button>
+        {!client&&<div style={{color:"rgba(255,255,255,.3)",fontSize:".75rem",marginTop:".5rem"}}>Wybierz typ klienta</div>}
+        {client&&isCustom&&customText.trim().length===0&&<div style={{color:"rgba(255,100,100,.6)",fontSize:".75rem",marginTop:".5rem"}}>Wpisz tresc scenariusza</div>}
+      </div>
+    </div>
+  );
+}
+
+function ChatView({industry,position,scenario,client,gender,age,firm,onBack}){
+  const [messages,setMessages]=useState([]);
+  const [input,setInput]=useState("");
+  const [loading,setLoading]=useState(false);
+  const [evalData,setEvalData]=useState(null);
+  const [evalLoading,setEvalLoading]=useState(false);
+  const [started,setStarted]=useState(false);
+  const [voiceMode,setVoiceMode]=useState(false);
+  const [isRecording,setIsRecording]=useState(false);
+  const [isSpeaking,setIsSpeaking]=useState(false);
+  const [ttsAvailable,setTtsAvailable]=useState(true);
+  const sysRef=useRef("");
+  const bottomRef=useRef(null);
+  const recognitionRef=useRef(null);
+  const audioRef=useRef(null);
+  const voiceParams=getVoiceParams(gender||"female",age||"middle",client.id);
+
+  async function playTTS(text){
+    if(!voiceMode||!text) return;
+    if(audioRef.current){audioRef.current.pause();audioRef.current=null;}
+    setIsSpeaking(true);
+    const audio=await speakText(text,voiceParams.voice,voiceParams.speed);
+    if(!audio){setIsSpeaking(false);setTtsAvailable(false);return;}
+    audioRef.current=audio;
+    audio.onended=()=>{setIsSpeaking(false);audioRef.current=null;};
+    audio.onerror=()=>{setIsSpeaking(false);audioRef.current=null;};
+    try{await audio.play();}catch(e){setIsSpeaking(false);}
+  }
+
+  function stopSpeaking(){
+    if(audioRef.current){audioRef.current.pause();audioRef.current=null;}
+    setIsSpeaking(false);
+  }
+
+  function startRecognition(onResult){
+    const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+    if(!SR) return;
+    const rec=new SR();
+    rec.lang="pl-PL";rec.interimResults=false;rec.maxAlternatives=1;
+    rec.onresult=(e)=>{
+      const transcript=e.results[0][0].transcript;
+      onResult(transcript);
+    };
+    rec.onerror=()=>{setIsRecording(false);};
+    rec.onend=()=>{setIsRecording(false);};
+    recognitionRef.current=rec;
+    rec.start();
+    setIsRecording(true);
+  }
+
+  function stopRecognition(){
+    if(recognitionRef.current){recognitionRef.current.stop();}
+    setIsRecording(false);
+  }
+
+  useEffect(()=>{bottomRef.current&&bottomRef.current.scrollIntoView({behavior:"smooth"})},[messages,evalData]);
+
+  async function startConversation(){
+    setStarted(true);
+    setLoading(true);
+    const sys=sysPrompt(client,scenario,industry,position,firm);
+    sysRef.current=sys;
+    const res=await callAPI({model:"claude-sonnet-4-20250514",max_tokens:1000,system:sys,messages:[{role:"user",content:"Zacznij."}]});
+    const txt=(res.content&&res.content[0]&&res.content[0].text)||"[blad API]";
+    setMessages([{role:"assistant",content:txt}]);
+    setLoading(false);
+    await playTTS(txt);
+  }
+
+  async function sendMessage(){
+    if(!input.trim()||loading)return;
+    const userMsg=input.trim();
+    setInput("");
+    const newMsgs=[...messages,{role:"user",content:userMsg}];
+    setMessages(newMsgs);
+    setEvalData(null);
+    setLoading(true);
+
+    const apiMsgs=[{role:"user",content:"Zacznij."}];
+    messages.forEach(function(m){apiMsgs.push({role:m.role,content:m.content});});
+    apiMsgs.push({role:"user",content:userMsg});
+
+    const res=await callAPI({model:"claude-sonnet-4-20250514",max_tokens:1000,system:sysRef.current,messages:apiMsgs});
+    const txt=(res.content&&res.content[0]&&res.content[0].text)||"[blad API]";
+    const finalMsgs=[...newMsgs,{role:"assistant",content:txt}];
+    setMessages(finalMsgs);
+    setLoading(false);
+    await playTTS(txt);
+
+    setEvalLoading(true);
+    const evalRes=await callAPI({model:"claude-sonnet-4-20250514",max_tokens:600,messages:[{role:"user",content:evalPrompt(industry,position,scenario,finalMsgs)}]});
+    const evalTxt=(evalRes.content&&evalRes.content[0]&&evalRes.content[0].text)||"{}";
+    try{
+      const clean=evalTxt.replace(/```json|```/g,"").trim();
+      setEvalData(JSON.parse(clean));
+    }catch(e){
+      setEvalData({score:0,mocne:[],slabe:[],sugestia:"Blad parsowania oceny.",reakcja_klienta:"neutralna"});
+    }
+    setEvalLoading(false);
+  }
+
+  function scoreColor(s){return s>=8?"#00B648":s>=5?"#fbbf24":"#ef4444";}
+
+  return (
+    <div style={{maxWidth:1100,margin:"0 auto",padding:"1rem",display:"grid",gridTemplateColumns:"1fr 310px",gap:"1rem",height:"calc(100vh - 2rem)"}}>
+      <div style={{display:"flex",flexDirection:"column",background:"#0a0a0a",border:"1px solid #1a1a1a",borderRadius:14,overflow:"hidden"}}>
+        <div style={{padding:".8rem 1rem",background:"#111",borderBottom:"1px solid #1a1a1a",display:"flex",alignItems:"center",gap:".6rem",flexShrink:0}}>
+          <button className="btn-back" onClick={onBack}>&#8592; Nowa</button>
+          <div style={{flex:1,minWidth:0}}>
+            <div style={{color:"#fff",fontWeight:600,fontSize:".85rem",whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{APP_DATA[industry].emoji} {industry} &middot; {position}</div>
+            <div style={{color:"rgba(255,255,255,.4)",fontSize:".72rem",whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{scenario}</div>
+          </div>
+          <span className="tag-g" style={{flexShrink:0}}>{client.label}</span>
+          {isSpeaking&&(
+            <div className="speaking-wave" style={{flexShrink:0}}>
+              <span style={{height:4}}/><span style={{height:8}}/><span style={{height:14}}/><span style={{height:8}}/><span style={{height:4}}/>
+            </div>
+          )}
+          <button className={`voice-btn${voiceMode?" active":""}`} title={voiceMode?"Wylącz tryb głosowy":"Włącz tryb głosowy"}
+            onClick={()=>{if(voiceMode){stopSpeaking();}setVoiceMode(!voiceMode);}}>
+            {voiceMode?"\uD83D\uDCDE":"📞"}
+            <span>{voiceMode?"Głos wl.":"Głosowy"}</span>
+          </button>
+          {voiceMode&&isSpeaking&&(
+            <button className="voice-btn" onClick={stopSpeaking} style={{borderColor:"rgba(239,68,68,.4)",color:"#ef4444"}} title="Zatrzymaj mówienie">&#9632;</button>
+          )}
+        </div>
+
+        <div style={{flex:1,overflowY:"auto",padding:"1rem",display:"flex",flexDirection:"column",gap:".7rem"}}>
+          {!started&&(
+            <div style={{textAlign:"center",margin:"auto"}}>
+              <div style={{fontSize:"2rem",marginBottom:".8rem"}}>&#128172;</div>
+              <div style={{color:"rgba(255,255,255,.5)",fontSize:".85rem",marginBottom:".4rem"}}>Klient: <strong style={{color:"#fff"}}>{client.label}</strong></div>
+              <div style={{color:"rgba(255,255,255,.35)",fontSize:".78rem",maxWidth:340,margin:"0 auto .9rem"}}>{scenario}</div>
+              <button className="btn-primary" style={{padding:".7rem 1.8rem",fontSize:".9rem"}} onClick={startConversation}>Zacznij rozmowe</button>
+            </div>
+          )}
+          {messages.map(function(m,i){
+            return (
+              <div key={i} style={{display:"flex",justifyContent:m.role==="user"?"flex-end":"flex-start"}}>
+                <div className={m.role==="user"?"msg-w":"msg-c"} style={{color:"rgba(255,255,255,.9)",fontSize:".86rem",lineHeight:1.55,whiteSpace:"pre-wrap"}}>
+                  {m.role==="assistant"&&<div style={{color:"rgba(255,255,255,.3)",fontSize:".68rem",marginBottom:".3rem"}}>KLIENT</div>}
+                  {m.role==="user"&&<div style={{color:"rgba(0,182,72,.5)",fontSize:".68rem",marginBottom:".3rem",textAlign:"right"}}>TY</div>}
+                  {m.content}
+                </div>
+              </div>
+            );
+          })}
+          {loading&&(
+            <div style={{display:"flex",justifyContent:"flex-start"}}>
+              <div className="msg-c" style={{color:"rgba(255,255,255,.5)",fontSize:".86rem"}}>
+                <span className="dot" style={{animationDelay:"0s"}}>&#9679;</span>
+                <span className="dot" style={{animationDelay:".3s"}}>&#9679;</span>
+                <span className="dot" style={{animationDelay:".6s"}}>&#9679;</span>
+              </div>
+            </div>
+          )}
+          <div ref={bottomRef}/>
+        </div>
+
+        {started&&(
+          <div style={{padding:".75rem",background:"#111",borderTop:"1px solid #1a1a1a",flexShrink:0}}>
+            {voiceMode&&!ttsAvailable&&(
+              <div style={{color:"rgba(255,165,0,.7)",fontSize:".72rem",marginBottom:".45rem",textAlign:"center"}}>
+                ⚠ Brak klucza OPENAI_KEY w .env &mdash; dodaj go i zrestartuj serwer aby włączyć głos AI.
+              </div>
+            )}
+            <div style={{display:"flex",gap:".5rem",alignItems:"flex-end"}}>
+              {voiceMode&&(
+                <button
+                  className={`mic-btn${isRecording?" recording":""}`}
+                  disabled={loading||isSpeaking}
+                  onClick={function(){
+                    if(isRecording){stopRecognition();return;}
+                    startRecognition(function(transcript){
+                      setInput(transcript);
+                    });
+                  }}
+                  title={isRecording?"Zatrzymaj nagrywanie":"Mów (kliknij raz, mów, kliknij ponownie)"}
+                >
+                  {isRecording?"🔴":"🎤"}
+                </button>
+              )}
+              <textarea className="inp" placeholder={voiceMode?"Mów lub wpisz swoją odpowiedź... (Enter = wyślij)":"Twoja odpowiedz jako pracownik... (Enter = wyslij, Shift+Enter = nowa linia)"} value={input}
+                onChange={function(e){setInput(e.target.value);}}
+                onKeyDown={function(e){if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();sendMessage();}}}
+                rows={2} style={{resize:"none",flex:1}}/>
+              <button className="btn-primary" onClick={sendMessage} disabled={loading||!input.trim()} style={{padding:".5rem 1rem",alignSelf:"stretch",minWidth:56}}>&#8629;</button>
+            </div>
+            {voiceMode&&(
+              <div style={{textAlign:"center",marginTop:".4rem",color:"rgba(255,255,255,.3)",fontSize:".7rem"}}>
+                {isRecording?"🔴 Nagrywam... (kliknij mikrofon aby zatrzymać)":isSpeaking?"🔊 Klient mówi...":"Głos: "+voiceParams.voice+" • prędkość: "+voiceParams.speed+"x"}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
+      <div style={{display:"flex",flexDirection:"column",gap:".75rem",overflowY:"auto"}}>
+        <div className="sec" style={{flexShrink:0}}>
+          <div className="lbl">Scenariusz</div>
+          <div style={{color:"rgba(255,255,255,.75)",fontSize:".8rem",lineHeight:1.5}}>{scenario}</div>
+          <div style={{marginTop:".6rem"}}>
+            <span className="tag-g">{industry}</span>
+            <span className="tag-y">{client.label}</span>
+          </div>
+        </div>
+
+        {evalLoading&&(
+          <div className="sec" style={{textAlign:"center",color:"rgba(255,255,255,.4)",fontSize:".82rem"}}>
+            Oceniam<span className="dot">.</span><span className="dot" style={{animationDelay:".3s"}}>.</span><span className="dot" style={{animationDelay:".6s"}}>.</span>
+          </div>
+        )}
+
+        {evalData&&!evalLoading&&(
+          <div className="sec">
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:".8rem"}}>
+              <div className="lbl" style={{marginBottom:0}}>Ocena odpowiedzi</div>
+              <div style={{fontSize:"1.4rem",fontWeight:700,color:scoreColor(evalData.score)}}>{evalData.score}/10</div>
+            </div>
+            <div style={{background:"#222",borderRadius:4,height:6,marginBottom:".8rem",overflow:"hidden"}}>
+              <div style={{height:"100%",width:((evalData.score/10)*100)+"%",background:scoreColor(evalData.score),borderRadius:4,transition:"width .5s"}}/>
+            </div>
+            {evalData.reakcja_klienta&&(
+              <div style={{marginBottom:".7rem"}}>
+                <span style={{fontSize:".75rem",padding:".2rem .55rem",borderRadius:12,border:"1px solid",
+                  color:evalData.reakcja_klienta==="deeskalacja"?"#00B648":evalData.reakcja_klienta==="eskalacja"?"#ef4444":"#fbbf24",
+                  borderColor:evalData.reakcja_klienta==="deeskalacja"?"rgba(0,182,72,.4)":evalData.reakcja_klienta==="eskalacja"?"rgba(239,68,68,.4)":"rgba(251,191,36,.4)",
+                  background:evalData.reakcja_klienta==="deeskalacja"?"rgba(0,182,72,.1)":evalData.reakcja_klienta==="eskalacja"?"rgba(239,68,68,.1)":"rgba(251,191,36,.1)"}}>
+                  {evalData.reakcja_klienta==="deeskalacja"?"Klient sie uspokaja":evalData.reakcja_klienta==="eskalacja"?"Klient eskaluje":"Neutralna reakcja"}
+                </span>
+              </div>
+            )}
+            {evalData.mocne&&evalData.mocne.length>0&&(
+              <div style={{marginBottom:".7rem"}}>
+                <div style={{color:"#00B648",fontSize:".7rem",marginBottom:".35rem",textTransform:"uppercase",letterSpacing:"1px"}}>Mocne strony</div>
+                {evalData.mocne.map(function(m,i){return <div key={i} className="mg" style={{color:"rgba(255,255,255,.75)",fontSize:".78rem",padding:".3rem .6rem"}}>{m}</div>;})}
+              </div>
+            )}
+            {evalData.slabe&&evalData.slabe.length>0&&(
+              <div style={{marginBottom:".7rem"}}>
+                <div style={{color:"#ef4444",fontSize:".7rem",marginBottom:".35rem",textTransform:"uppercase",letterSpacing:"1px"}}>Do poprawy</div>
+                {evalData.slabe.map(function(s,i){return <div key={i} className="mb" style={{color:"rgba(255,255,255,.75)",fontSize:".78rem",padding:".3rem .6rem"}}>{s}</div>;})}
+              </div>
+            )}
+            {evalData.sugestia&&(
+              <div style={{background:"rgba(0,182,72,.06)",border:"1px solid rgba(0,182,72,.2)",borderRadius:8,padding:".65rem .8rem"}}>
+                <div style={{color:"#00B648",fontSize:".7rem",marginBottom:".3rem",textTransform:"uppercase",letterSpacing:"1px"}}>Sugestia</div>
+                <div style={{color:"rgba(255,255,255,.75)",fontSize:".78rem",lineHeight:1.5}}>{evalData.sugestia}</div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {!evalData&&started&&!evalLoading&&(
+          <div className="sec" style={{color:"rgba(255,255,255,.4)",fontSize:".78rem",lineHeight:1.7}}>
+            <div className="lbl">Wskazowki</div>
+            <div className="mg" style={{padding:".3rem .6rem"}}>Wykazuj empatii i zrozumienie problemu</div>
+            <div className="mg" style={{padding:".3rem .6rem"}}>Podaj konkretne rozwiazanie lub harmonogram</div>
+            <div className="mg" style={{padding:".3rem .6rem"}}>Unikaj ogolnikow i obietnic bez pokrycia</div>
+            <div className="mg" style={{padding:".3rem .6rem"}}>Zachowaj profesjonalizm przy eskalacji</div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function App(){
+  const [step,setStep]=useState("industry");
+  const [industry,setIndustry]=useState(null);
+  const [position,setPosition]=useState(null);
+  const [chatConfig,setChatConfig]=useState(null);
+
+  if(step==="industry") return React.createElement(StepIndustry,{onSelect:function(ind){setIndustry(ind);setStep("position");}});
+  if(step==="position") return React.createElement(StepPosition,{industry:industry,onSelect:function(pos){setPosition(pos);setStep("setup");},onBack:function(){setStep("industry");}});
+  if(step==="setup") return React.createElement(StepSetup,{industry:industry,position:position,onBack:function(){setStep("position");},onStart:function(cfg){setChatConfig(cfg);setStep("chat");}});
+  if(step==="chat") return React.createElement(ChatView,{industry:industry,position:position,scenario:chatConfig.scenario,client:chatConfig.client,gender:chatConfig.gender,age:chatConfig.age,firm:chatConfig.firm,onBack:function(){setStep("industry");}});
+  return null;
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(React.createElement(App));
+</script>
+</body>
+</html>

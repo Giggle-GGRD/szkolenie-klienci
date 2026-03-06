@@ -1,0 +1,397 @@
+﻿<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Symulator Trudnych Klientow | AI Trening</title>
+<script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="data.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#00301A;font-family:'DM Sans',sans-serif;min-height:100vh}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:#111}::-webkit-scrollbar-thumb{background:#333;border-radius:3px}
+.card{background:rgba(255,255,255,.05);border:1px solid rgba(0,182,72,.2);border-radius:10px;padding:.75rem 1rem;cursor:pointer;transition:all .2s}
+.card:hover{background:rgba(0,182,72,.12);border-color:#00B648;transform:translateY(-1px)}
+.card.selected{background:rgba(0,182,72,.2);border-color:#00B648;box-shadow:0 0 0 2px #00B648}
+.card-sm{background:rgba(255,255,255,.04);border:1px solid rgba(0,182,72,.15);border-radius:8px;padding:.55rem .8rem;cursor:pointer;transition:all .15s}
+.card-sm:hover{background:rgba(0,182,72,.1);border-color:#00B648}
+.card-sm.selected{background:rgba(0,182,72,.18);border-color:#00B648;box-shadow:0 0 0 1.5px #00B648}
+.grid2{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:.55rem}
+.grid3{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:.5rem}
+.grid-industry{display:grid;grid-template-columns:repeat(auto-fill,minmax(175px,1fr));gap:.55rem}
+.btn-primary{background:#00B648;color:#00301A;border:none;padding:.85rem 2.5rem;font-size:1rem;font-family:'DM Sans',sans-serif;font-weight:700;border-radius:8px;cursor:pointer;transition:all .2s}
+.btn-primary:hover:not(:disabled){background:#00d455;transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,182,72,.4)}
+.btn-primary:disabled{opacity:.3;cursor:not-allowed}
+.btn-back{background:transparent;border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.5);padding:.4rem .8rem;border-radius:6px;cursor:pointer;font-size:.78rem;font-family:'DM Sans',sans-serif;transition:all .15s}
+.btn-back:hover{border-color:rgba(255,255,255,.4);color:rgba(255,255,255,.8)}
+.inp{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:8px;padding:.65rem .9rem;color:#fff;font-family:'DM Sans',sans-serif;font-size:.88rem;width:100%;outline:none;transition:border .2s}
+.inp:focus{border-color:#00B648}.inp::placeholder{color:rgba(255,255,255,.25)}
+.msg-c{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:12px 12px 12px 4px;padding:.85rem 1rem;max-width:78%;align-self:flex-start}
+.msg-w{background:#003d20;border:1px solid rgba(0,182,72,.4);border-radius:12px 12px 4px 12px;padding:.85rem 1rem;max-width:78%;align-self:flex-end}
+.sec{background:#111;border:1px solid #222;border-radius:12px;padding:1.25rem;margin-bottom:.9rem}
+.tag-g{background:rgba(0,182,72,.15);color:#00B648;padding:.25rem .65rem;border-radius:20px;font-size:.76rem;display:inline-block;margin:.2rem;border:1px solid rgba(0,182,72,.3)}
+.tag-y{background:rgba(251,191,36,.1);color:#fbbf24;padding:.25rem .65rem;border-radius:20px;font-size:.76rem;display:inline-block;margin:.2rem;border:1px solid rgba(251,191,36,.3)}
+.mg{border-left:3px solid #00B648;padding-left:.75rem;margin-bottom:.35rem}
+.mb{border-left:3px solid #ef4444;padding-left:.75rem;margin-bottom:.35rem}
+.lbl{color:#00B648;font-size:.7rem;letter-spacing:2px;text-transform:uppercase;margin-bottom:.6rem}
+.dot{display:inline-block;animation:dt 1.2s infinite}
+@keyframes dt{0%,100%{opacity:.2}50%{opacity:1}}
+.scenario-select{background:#1a1a1a;border:1px solid rgba(0,182,72,.3);border-radius:8px;color:#fff;font-family:'DM Sans',sans-serif;font-size:.85rem;padding:.65rem .9rem;width:100%;outline:none;cursor:pointer;transition:border .2s}
+.scenario-select:focus{border-color:#00B648}
+.scenario-select option{background:#1a1a1a;color:#fff}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const {useState,useRef,useEffect}=React;
+
+const CLIENTS=[
+  {id:"agresywny",label:"Agresywny",desc:"Podniesiony ton, grozi, ostre slowa"},
+  {id:"roszczeniowy",label:"Roszczeniowy",desc:"Oczekuje wyjatkowego traktowania"},
+  {id:"nieufny",label:"Nieufny",desc:"Obawia sie ukrytych kosztow i bledow"},
+  {id:"oszczedny",label:"Oszczedny",desc:"Skupiony wylacznie na cenie"},
+  {id:"negocjujacy",label:"Negocjujacy",desc:"Stale probuje obnizyc cene"},
+  {id:"emocjonalny",label:"Emocjonalny",desc:"Reaguje uczuciami, stresem, plataczem"},
+  {id:"niezdecydowany",label:"Niezdecydowany",desc:"Waha sie, potrzebuje duzo czasu"},
+  {id:"sceptyczny",label:"Sceptyczny",desc:"Watpi w kazde wyjasnienie"},
+  {id:"dociekliwy",label:"Dociekliwy",desc:"Zasypuje pytaniami, drazy szczegoly"},
+  {id:"milczacy",label:"Milczacy",desc:"Odpowiada krotko, nic nie ulatwia"},
+];
+
+async function callAPI(body){
+  const r=await fetch("/api/chat",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
+  return r.json();
+}
+
+function sysPrompt(client,scenario,industry,position,firm){
+  const fi=firm.name
+    ?Dane firmy:\n- Nazwa: 
+Klient ZNA te dane i moze sie do nich odwolywac.
+    :Firma z branzy: .;
+  return Jestes klientem prowadzacym rozmowe z pracownikiem firmy.
+Branza:  | Stanowisko pracownika: 
+
+
+
+Typ klienta:  - 
+Scenariusz: 
+
+ZASADY:
+- Zachowuj sie jak PRAWDZIWY polski klient z tym problemem
+- Uzywaj naturalnego potocznego jezyka, mozesz byc niegramatyczny
+- ESKALUJ gdy pracownik unika tematu, mowi ogolnikami lub jest arogancki
+- LAGODNIEJ gdy pracownik jest empatyczny i daje konkretne rozwiazanie
+- Reaguj na TRESC - nie tylko ton; max 8-10 wymian
+- Mozesz zadac przelozonego gdy rozmawiasz z nizszym pracownikiem
+- Nie rozwiazuj problemu sam - czekaj az pracownik podejmie dzialanie
+
+ZACZNIJ: od razu opisz problem i emocje. Bez formalnego powitania.;
+}
+
+function evalPrompt(industry,position,scenario,messages){
+  const conv=messages.map(m=>(m.role==='assistant'?'KLIENT: ':m.role==='user'?'PRACOWNIK: ':'')+m.content).join('\n\n');
+  return Jestes ekspertem od obslugi klienta w branzy: .
+Ocen odpowiedz pracownika (). Scenariusz: 
+
+ROZMOWA:
+
+
+Zwroc WYLACZNIE JSON bez markdown:
+{"score":<0-10>,"mocne":["..."],"slabe":["..."],"sugestia":"...","reakcja_klienta":"eskalacja|deeskalacja|neutralna"}
+0-3=slabe,4-6=przecietne,7-8=dobre,9-10=wzorcowe. Ocen: empatia,konkretnosc,profesjonalizm,znajomosc branzy.;
+}
+
+function StepIndustry({onSelect}){
+  const industries=Object.keys(APP_DATA);
+  return (
+    <div style={{maxWidth:900,margin:"0 auto",padding:"1.5rem"}}>
+      <div style={{textAlign:"center",marginBottom:"1.8rem"}}>
+        <div style={{fontFamily:"DM Serif Display",color:"#00B648",fontSize:"1.9rem",marginBottom:".4rem"}}>Symulator Trudnych Klientow</div>
+        <div style={{color:"rgba(255,255,255,.4)",fontSize:".85rem"}}>Wybierz branze firmy, ktora reprezentujesz</div>
+      </div>
+      <div className="grid-industry">
+        {industries.map(ind=>(
+          <div key={ind} className="card" onClick={()=>onSelect(ind)} style={{textAlign:"center",padding:"1rem .8rem"}}>
+            <div style={{fontSize:"1.6rem",marginBottom:".4rem"}}>{APP_DATA[ind].emoji}</div>
+            <div style={{color:"#fff",fontSize:".85rem",fontWeight:500}}>{ind}</div>
+            <div style={{color:"rgba(255,255,255,.35)",fontSize:".72rem",marginTop:".25rem"}}>
+              {Object.keys(APP_DATA[ind].stanowiska).length} stanowiska
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function StepPosition({industry,onSelect,onBack}){
+  const positions=Object.keys(APP_DATA[industry].stanowiska);
+  return (
+    <div style={{maxWidth:740,margin:"0 auto",padding:"1.5rem"}}>
+      <button className="btn-back" onClick={onBack} style={{marginBottom:"1.2rem"}}>&larr; Branze</button>
+      <div style={{marginBottom:"1.2rem",display:"flex",alignItems:"center",gap:".6rem"}}>
+        <span style={{fontSize:"1.5rem"}}>{APP_DATA[industry].emoji}</span>
+        <div>
+          <div style={{color:"#00B648",fontWeight:600,fontSize:"1.05rem"}}>{industry}</div>
+          <div style={{color:"rgba(255,255,255,.4)",fontSize:".82rem"}}>Wybierz swoje stanowisko</div>
+        </div>
+      </div>
+      <div className="grid2">
+        {positions.map(pos=>(
+          <div key={pos} className="card" onClick={()=>onSelect(pos)} style={{display:"flex",alignItems:"center",gap:".7rem"}}>
+            <span style={{fontSize:"1.3rem"}}>{APP_DATA[industry].stanowiska[pos].emoji}</span>
+            <div>
+              <div style={{color:"#fff",fontSize:".88rem",fontWeight:500}}>{pos}</div>
+              <div style={{color:"rgba(255,255,255,.35)",fontSize:".72rem",marginTop:".15rem"}}>
+                {APP_DATA[industry].stanowiska[pos].scenariusze.length} scenariuszy
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function StepSetup({industry,position,onStart,onBack}){
+  const scenarios=APP_DATA[industry].stanowiska[position].scenariusze;
+  const [scenIdx,setScenIdx]=useState(0);
+  const [client,setClient]=useState(null);
+  const [firm,setFirm]=useState({name:"",boss:"",phone:"",address:""});
+  const [showFirm,setShowFirm]=useState(false);
+  return (
+    <div style={{maxWidth:840,margin:"0 auto",padding:"1.5rem"}}>
+      <button className="btn-back" onClick={onBack} style={{marginBottom:"1.2rem"}}>&larr; Stanowiska</button>
+      <div style={{background:"#111",border:"1px solid #222",borderRadius:12,padding:".9rem 1.2rem",marginBottom:"1rem",display:"flex",gap:".6rem",alignItems:"center"}}>
+        <span style={{fontSize:"1.3rem"}}>{APP_DATA[industry].emoji}</span>
+        <div>
+          <div style={{color:"rgba(255,255,255,.4)",fontSize:".72rem",textTransform:"uppercase",letterSpacing:"1px"}}>{industry}</div>
+          <div style={{color:"#fff",fontWeight:600,fontSize:".92rem"}}>{position}</div>
+        </div>
+      </div>
+      <div className="sec">
+        <div className="lbl">Scenariusz</div>
+        <select className="scenario-select" value={scenIdx} onChange={e=>setScenIdx(Number(e.target.value))}>
+          {scenarios.map((s,i)=><option key={i} value={i}>{i+1}. {s}</option>)}
+        </select>
+        <div style={{marginTop:".75rem",background:"rgba(0,182,72,.07)",border:"1px solid rgba(0,182,72,.2)",borderRadius:8,padding:".7rem .9rem",color:"rgba(255,255,255,.75)",fontSize:".84rem",lineHeight:1.5}}>
+          {scenarios[scenIdx]}
+        </div>
+      </div>
+      <div className="sec">
+        <div className="lbl">Typ klienta</div>
+        <div className="grid3">
+          {CLIENTS.map(c=>(
+            <div key={c.id} className={card-sm} onClick={()=>setClient(c)}>
+              <div style={{color:"#fff",fontSize:".82rem",fontWeight:500}}>{c.label}</div>
+              <div style={{color:"rgba(255,255,255,.38)",fontSize:".72rem",marginTop:".15rem"}}>{c.desc}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+      <div className="sec">
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:showFirm?".8rem":"0"}}>
+          <div className="lbl" style={{marginBottom:0}}>Dane firmy <span style={{color:"rgba(255,255,255,.3)",fontWeight:400,textTransform:"none",letterSpacing:0,fontSize:".72rem"}}>(opcjonalne)</span></div>
+          <button className="btn-back" onClick={()=>setShowFirm(!showFirm)} style={{fontSize:".75rem"}}>{showFirm?"Ukryj":"Wypelnij"}</button>
+        </div>
+        {showFirm&&(
+          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:".6rem"}}>
+            {[{k:"name",ph:"Nazwa firmy"},{k:"boss",ph:"Szef/Wlasciciel"},{k:"phone",ph:"Telefon"},{k:"address",ph:"Adres"}].map(({k,ph})=>(
+              <input key={k} className="inp" placeholder={ph} value={firm[k]} onChange={e=>setFirm({...firm,[k]:e.target.value})}/>
+            ))}
+          </div>
+        )}
+      </div>
+      <div style={{textAlign:"center",marginTop:".5rem"}}>
+        <button className="btn-primary" disabled={!client} onClick={()=>onStart({scenario:scenarios[scenIdx],client,firm})}>
+          Rozpocznij symulacje &rarr;
+        </button>
+        {!client&&<div style={{color:"rgba(255,255,255,.3)",fontSize:".75rem",marginTop:".5rem"}}>Wybierz typ klienta</div>}
+      </div>
+    </div>
+  );
+}
+
+function ChatView({industry,position,scenario,client,firm,onBack}){
+  const [messages,setMessages]=useState([]);
+  const [input,setInput]=useState("");
+  const [loading,setLoading]=useState(false);
+  const [evalData,setEvalData]=useState(null);
+  const [evalLoading,setEvalLoading]=useState(false);
+  const [started,setStarted]=useState(false);
+  const sysRef=useRef("");
+  const bottomRef=useRef(null);
+
+  useEffect(()=>{bottomRef.current&&bottomRef.current.scrollIntoView({behavior:"smooth"})},[messages,evalData]);
+
+  async function startConversation(){
+    setStarted(true);setLoading(true);
+    const sys=sysPrompt(client,scenario,industry,position,firm);
+    sysRef.current=sys;
+    const res=await callAPI({model:"claude-sonnet-4-20250514",max_tokens:1000,system:sys,messages:[{role:"user",content:"Zacznij."}]});
+    const txt=(res.content&&res.content[0]&&res.content[0].text)||"[blad API]";
+    setMessages([{role:"assistant",content:txt}]);
+    setLoading(false);
+  }
+
+  async function sendMessage(){
+    if(!input.trim()||loading)return;
+    const userMsg=input.trim();
+    setInput("");
+    const newMsgs=[...messages,{role:"user",content:userMsg}];
+    setMessages(newMsgs);setEvalData(null);setLoading(true);
+    const apiMsgs=[{role:"user",content:"Zacznij."}];
+    messages.forEach(m=>apiMsgs.push({role:m.role,content:m.content}));
+    apiMsgs.push({role:"user",content:userMsg});
+    const res=await callAPI({model:"claude-sonnet-4-20250514",max_tokens:1000,system:sysRef.current,messages:apiMsgs});
+    const txt=(res.content&&res.content[0]&&res.content[0].text)||"[blad API]";
+    const finalMsgs=[...newMsgs,{role:"assistant",content:txt}];
+    setMessages(finalMsgs);setLoading(false);
+    setEvalLoading(true);
+    const er=await callAPI({model:"claude-sonnet-4-20250514",max_tokens:600,messages:[{role:"user",content:evalPrompt(industry,position,scenario,finalMsgs)}]});
+    const et=(er.content&&er.content[0]&&er.content[0].text)||"{}";
+    try{setEvalData(JSON.parse(et.replace(/+++json|+++/g,"").trim()));}
+    catch(e){setEvalData({score:0,mocne:[],slabe:[],sugestia:"Blad oceny.",reakcja_klienta:"neutralna"});}
+    setEvalLoading(false);
+  }
+
+  const sc=s=>s>=8?"#00B648":s>=5?"#fbbf24":"#ef4444";
+
+  return (
+    <div style={{maxWidth:1100,margin:"0 auto",padding:"1rem",display:"grid",gridTemplateColumns:"1fr 310px",gap:"1rem",height:"calc(100vh - 2rem)"}}>
+      <div style={{display:"flex",flexDirection:"column",background:"#0a0a0a",border:"1px solid #1a1a1a",borderRadius:14,overflow:"hidden"}}>
+        <div style={{padding:".8rem 1rem",background:"#111",borderBottom:"1px solid #1a1a1a",display:"flex",alignItems:"center",gap:".6rem",flexShrink:0}}>
+          <button className="btn-back" onClick={onBack}>&larr; Nowa</button>
+          <div style={{flex:1,minWidth:0}}>
+            <div style={{color:"#fff",fontWeight:600,fontSize:".85rem",whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{APP_DATA[industry].emoji} {industry} &middot; {position}</div>
+            <div style={{color:"rgba(255,255,255,.4)",fontSize:".72rem",whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{scenario}</div>
+          </div>
+          <span className="tag-g" style={{flexShrink:0}}>{client.label}</span>
+        </div>
+        <div style={{flex:1,overflowY:"auto",padding:"1rem",display:"flex",flexDirection:"column",gap:".7rem"}}>
+          {!started&&(
+            <div style={{textAlign:"center",margin:"auto"}}>
+              <div style={{fontSize:"2rem",marginBottom:".8rem"}}>&#128172;</div>
+              <div style={{color:"rgba(255,255,255,.5)",fontSize:".85rem",marginBottom:".4rem"}}>Klient: <strong style={{color:"#fff"}}>{client.label}</strong></div>
+              <div style={{color:"rgba(255,255,255,.35)",fontSize:".78rem",maxWidth:340,margin:"0 auto .9rem"}}>{scenario}</div>
+              <button className="btn-primary" style={{padding:".7rem 1.8rem",fontSize:".9rem"}} onClick={startConversation}>Zacznij rozmowe</button>
+            </div>
+          )}
+          {messages.map((m,i)=>(
+            <div key={i} style={{display:"flex",justifyContent:m.role==="user"?"flex-end":"flex-start"}}>
+              <div className={m.role==="user"?"msg-w":"msg-c"} style={{color:"rgba(255,255,255,.9)",fontSize:".86rem",lineHeight:1.55,whiteSpace:"pre-wrap"}}>
+                {m.role==="assistant"&&<div style={{color:"rgba(255,255,255,.3)",fontSize:".68rem",marginBottom:".3rem"}}>KLIENT</div>}
+                {m.role==="user"&&<div style={{color:"rgba(0,182,72,.5)",fontSize:".68rem",marginBottom:".3rem",textAlign:"right"}}>TY</div>}
+                {m.content}
+              </div>
+            </div>
+          ))}
+          {loading&&(
+            <div style={{display:"flex"}}>
+              <div className="msg-c" style={{color:"rgba(255,255,255,.5)",fontSize:".86rem"}}>
+                <span className="dot" style={{animationDelay:"0s"}}>&#9679;</span>
+                <span className="dot" style={{animationDelay:".3s"}}>&#9679;</span>
+                <span className="dot" style={{animationDelay:".6s"}}>&#9679;</span>
+              </div>
+            </div>
+          )}
+          <div ref={bottomRef}/>
+        </div>
+        {started&&(
+          <div style={{padding:".75rem",background:"#111",borderTop:"1px solid #1a1a1a",display:"flex",gap:".5rem",flexShrink:0}}>
+            <textarea className="inp" placeholder="Twoja odpowiedz jako pracownik... (Enter=wyslij, Shift+Enter=nowa linia)" value={input}
+              onChange={e=>setInput(e.target.value)}
+              onKeyDown={e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();sendMessage()}}}
+              rows={2} style={{resize:"none",flex:1}}/>
+            <button className="btn-primary" onClick={sendMessage} disabled={loading||!input.trim()} style={{padding:".5rem 1rem",alignSelf:"stretch",minWidth:52}}>&#8629;</button>
+          </div>
+        )}
+      </div>
+
+      <div style={{display:"flex",flexDirection:"column",gap:".75rem",overflowY:"auto"}}>
+        <div className="sec" style={{flexShrink:0}}>
+          <div className="lbl">Scenariusz</div>
+          <div style={{color:"rgba(255,255,255,.75)",fontSize:".8rem",lineHeight:1.5}}>{scenario}</div>
+          <div style={{marginTop:".6rem"}}>
+            <span className="tag-g">{industry}</span>
+            <span className="tag-y">{client.label}</span>
+          </div>
+        </div>
+        {evalLoading&&(
+          <div className="sec" style={{textAlign:"center",color:"rgba(255,255,255,.4)",fontSize:".82rem"}}>
+            Oceniam<span className="dot">.</span><span className="dot" style={{animationDelay:".3s"}}>.</span><span className="dot" style={{animationDelay:".6s"}}>.</span>
+          </div>
+        )}
+        {evalData&&!evalLoading&&(
+          <div className="sec">
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:".8rem"}}>
+              <div className="lbl" style={{marginBottom:0}}>Ocena odpowiedzi</div>
+              <div style={{fontSize:"1.4rem",fontWeight:700,color:sc(evalData.score)}}>{evalData.score}/10</div>
+            </div>
+            <div style={{background:"#222",borderRadius:4,height:6,marginBottom:".8rem",overflow:"hidden"}}>
+              <div style={{height:"100%",width:((evalData.score/10)*100)+"%",background:sc(evalData.score),borderRadius:4,transition:"width .5s"}}/>
+            </div>
+            {evalData.reakcja_klienta&&(
+              <div style={{marginBottom:".7rem"}}>
+                <span style={{fontSize:".75rem",padding:".2rem .55rem",borderRadius:12,border:"1px solid",
+                  color:evalData.reakcja_klienta==="deeskalacja"?"#00B648":evalData.reakcja_klienta==="eskalacja"?"#ef4444":"#fbbf24",
+                  borderColor:evalData.reakcja_klienta==="deeskalacja"?"rgba(0,182,72,.4)":evalData.reakcja_klienta==="eskalacja"?"rgba(239,68,68,.4)":"rgba(251,191,36,.4)",
+                  background:evalData.reakcja_klienta==="deeskalacja"?"rgba(0,182,72,.1)":evalData.reakcja_klienta==="eskalacja"?"rgba(239,68,68,.1)":"rgba(251,191,36,.1)"}}>
+                  {evalData.reakcja_klienta==="deeskalacja"?"Klient sie uspokaja":evalData.reakcja_klienta==="eskalacja"?"Klient eskaluje":"Neutralna reakcja"}
+                </span>
+              </div>
+            )}
+            {evalData.mocne&&evalData.mocne.length>0&&(
+              <div style={{marginBottom:".7rem"}}>
+                <div style={{color:"#00B648",fontSize:".7rem",marginBottom:".35rem",textTransform:"uppercase",letterSpacing:"1px"}}>Mocne strony</div>
+                {evalData.mocne.map((m,i)=><div key={i} className="mg" style={{color:"rgba(255,255,255,.75)",fontSize:".78rem",padding:".3rem .6rem"}}>{m}</div>)}
+              </div>
+            )}
+            {evalData.slabe&&evalData.slabe.length>0&&(
+              <div style={{marginBottom:".7rem"}}>
+                <div style={{color:"#ef4444",fontSize:".7rem",marginBottom:".35rem",textTransform:"uppercase",letterSpacing:"1px"}}>Do poprawy</div>
+                {evalData.slabe.map((s,i)=><div key={i} className="mb" style={{color:"rgba(255,255,255,.75)",fontSize:".78rem",padding:".3rem .6rem"}}>{s}</div>)}
+              </div>
+            )}
+            {evalData.sugestia&&(
+              <div style={{background:"rgba(0,182,72,.06)",border:"1px solid rgba(0,182,72,.2)",borderRadius:8,padding:".65rem .8rem"}}>
+                <div style={{color:"#00B648",fontSize:".7rem",marginBottom:".3rem",textTransform:"uppercase",letterSpacing:"1px"}}>Sugestia</div>
+                <div style={{color:"rgba(255,255,255,.75)",fontSize:".78rem",lineHeight:1.5}}>{evalData.sugestia}</div>
+              </div>
+            )}
+          </div>
+        )}
+        {!evalData&&started&&!evalLoading&&(
+          <div className="sec" style={{color:"rgba(255,255,255,.4)",fontSize:".78rem",lineHeight:1.7}}>
+            <div className="lbl">Wskazowki</div>
+            <div className="mg" style={{padding:".3rem .6rem"}}>Wykazuj empatii i zrozumienie problemu</div>
+            <div className="mg" style={{padding:".3rem .6rem"}}>Podaj konkretne rozwiazanie lub harmonogram</div>
+            <div className="mg" style={{padding:".3rem .6rem"}}>Unikaj ogolnikow i obietnic bez pokrycia</div>
+            <div className="mg" style={{padding:".3rem .6rem"}}>Zachowaj profesjonalizm przy eskalacji</div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function App(){
+  const [step,setStep]=useState("industry");
+  const [industry,setIndustry]=useState(null);
+  const [position,setPosition]=useState(null);
+  const [chatConfig,setChatConfig]=useState(null);
+  if(step==="industry") return <StepIndustry onSelect={ind=>{setIndustry(ind);setStep("position")}}/>;
+  if(step==="position") return <StepPosition industry={industry} onSelect={pos=>{setPosition(pos);setStep("setup")}} onBack={()=>setStep("industry")}/>;
+  if(step==="setup") return <StepSetup industry={industry} position={position} onBack={()=>setStep("position")} onStart={cfg=>{setChatConfig(cfg);setStep("chat")}}/>;
+  if(step==="chat") return <ChatView industry={industry} position={position} scenario={chatConfig.scenario} client={chatConfig.client} firm={chatConfig.firm} onBack={()=>setStep("industry")}/>;
+  return null;
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+</script>
+</body>
+</html>
