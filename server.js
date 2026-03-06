@@ -43,7 +43,7 @@ app.post("/api/tts", async (req, res) => {
         "Authorization": `Bearer ${OPENAI_KEY}`
       },
       body: JSON.stringify({
-        model: "tts-1",
+        model: "tts-1-hd",
         input: text,
         voice: voice,
         speed: Math.min(4.0, Math.max(0.25, speed)),
