@@ -81,30 +81,60 @@ const CLIENTS=[
   {id:"milczacy",label:"Milczacy",desc:"Odpowiada krotko, nic nie ulatwia"},
 ];
 
-// Mapowanie głosów: płeć × wiek → głos OpenAI TTS
+// Mapowanie głosów gpt-4o-mini-tts: płeć × wiek → najbardziej naturalny głos
+// Męskie: ash (młody/pewny), ballad (ciepły/dramatyczny), echo (neutralny), onyx (głęboki/dojrzały)
+// ŻeDSkie: coral (naturalny/energiczny), nova (wyważony), sage (dojrzały/spokojny), shimmer (miękki)
 const VOICE_MAP={
-  female:{young:"nova",middle:"shimmer",senior:"alloy"},
-  male:  {young:"echo", middle:"fable",  senior:"onyx"}
+  female:{young:"coral", middle:"nova",  senior:"sage"},
+  male:  {young:"ash",   middle:"ballad",senior:"onyx"}
 };
 // Prędkość mówienia wg charakteru klienta
 const SPEED_MAP={
-  agresywny:1.15,roszczeniowy:1.05,nieufny:0.88,oszczedny:1.0,
-  negocjujacy:1.1,emocjonalny:0.92,niezdecydowany:0.80,
-  sceptyczny:0.88,dociekliwy:1.2,milczacy:0.75
+  agresywny:1.1,roszczeniowy:1.05,nieufny:0.9,oszczedny:1.0,
+  negocjujacy:1.05,emocjonalny:0.95,niezdecydowany:0.85,
+  sceptyczny:0.9,dociekliwy:1.1,milczacy:0.8
 };
 function getVoiceParams(gender,age,clientId){
-  const voice=(VOICE_MAP[gender]||VOICE_MAP.female)[age]||"nova";
+  const voice=(VOICE_MAP[gender]||VOICE_MAP.female)[age]||"coral";
   const speed=SPEED_MAP[clientId]||1.0;
   return {voice,speed};
 }
+// Szybki TTS: MediaSource streaming (audio gra od pierwszych chunków, nie czeka na cały plik)
 async function speakText(text,voice,speed){
   try{
     const r=await fetch("/api/tts",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({text,voice,speed})});
     if(!r.ok) return null;
+    // Streaming przez MediaSource (Chrome/Edge) — zaczyna grać natychmiast
+    if(window.MediaSource&&MediaSource.isTypeSupported&&MediaSource.isTypeSupported('audio/mpeg')){
+      const ms=new MediaSource();
+      const audio=new Audio(URL.createObjectURL(ms));
+      ms.addEventListener('sourceopen',async()=>{
+        let sb;
+        try{
+          sb=ms.addSourceBuffer('audio/mpeg');
+        }catch(e){
+          // przeglądarka nie obsługuje — fallback
+          const blob=await r.blob();
+          audio.src=URL.createObjectURL(blob);
+          return;
+        }
+        const reader=r.body.getReader();
+        const pump=async()=>{
+          try{
+            const{done,value}=await reader.read();
+            if(done){if(!ms.readyState||ms.readyState==='open')ms.endOfStream();return;}
+            if(sb.updating)await new Promise(res=>sb.addEventListener('updateend',res,{once:true}));
+            sb.appendBuffer(value);
+            sb.addEventListener('updateend',pump,{once:true});
+          }catch(e){if(ms.readyState==='open')ms.endOfStream();}
+        };
+        pump();
+      },{once:true});
+      return audio;
+    }
+    // Fallback: blob (Safari i starsze)
     const blob=await r.blob();
-    const url=URL.createObjectURL(blob);
-    const audio=new Audio(url);
-    return audio;
+    return new Audio(URL.createObjectURL(blob));
   }catch(e){return null;}
 }
 async function callAPI(body){
@@ -344,10 +374,12 @@ function ChatView({industry,position,scenario,client,gender,age,firm,onBack}){
   const voiceModeRef=useRef(false);
   const voiceParams=getVoiceParams(gender||"female",age||"middle",client.id);
 
-  useEffect(()=>{voiceModeRef.current=voiceMode;},[voiceMode]);
+  // BRAK useEffect dla voiceMode — ref aktualizowany natychmiastowo w onClick
 
-  async function playTTS(text){
-    if(!voiceModeRef.current||!text) return;
+  // playTTS: enabled=true wymusza odtwarzanie niezależnie od ref (np. przy włączeniu głosu)
+  async function playTTS(text, enabled){
+    const active = (enabled !== undefined) ? enabled : voiceModeRef.current;
+    if(!active||!text) return;
     if(audioRef.current){audioRef.current.pause();audioRef.current=null;}
     setIsSpeaking(true);
     const audio=await speakText(text,voiceParams.voice,voiceParams.speed);
@@ -395,7 +427,8 @@ function ChatView({industry,position,scenario,client,gender,age,firm,onBack}){
     const txt=(res.content&&res.content[0]&&res.content[0].text)||"[blad API]";
     setMessages([{role:"assistant",content:txt}]);
     setLoading(false);
-    await playTTS(txt);
+    // Przekazuj voiceModeRef.current wprost — ref jest zawsze aktualny (aktualizowany synchronicznie w onClick)
+    await playTTS(txt, voiceModeRef.current);
   }
 
   async function sendMessage(){
@@ -417,10 +450,14 @@ function ChatView({industry,position,scenario,client,gender,age,firm,onBack}){
     const finalMsgs=[...newMsgs,{role:"assistant",content:txt}];
     setMessages(finalMsgs);
     setLoading(false);
-    await playTTS(txt);
 
+    // Równoległe: TTS + eval jednocześnie (oszczędza ~1-2s na każdą wymianę)
+    const voiceActive=voiceModeRef.current;
     setEvalLoading(true);
-    const evalRes=await callAPI({model:"claude-sonnet-4-20250514",max_tokens:600,messages:[{role:"user",content:evalPrompt(industry,position,scenario,finalMsgs)}]});
+    const[,evalRes]=await Promise.all([
+      playTTS(txt, voiceActive),
+      callAPI({model:"claude-sonnet-4-20250514",max_tokens:600,messages:[{role:"user",content:evalPrompt(industry,position,scenario,finalMsgs)}]})
+    ]);
     const evalTxt=(evalRes.content&&evalRes.content[0]&&evalRes.content[0].text)||"{}";
     try{
       const clean=evalTxt.replace(/```json|```/g,"").trim();
@@ -449,7 +486,17 @@ function ChatView({industry,position,scenario,client,gender,age,firm,onBack}){
             </div>
           )}
           <button className={`voice-btn${voiceMode?" active":""}`} title={voiceMode?"Wylącz tryb głosowy":"Włącz tryb głosowy"}
-            onClick={()=>{if(voiceMode){stopSpeaking();}setVoiceMode(!voiceMode);}}>
+            onClick={()=>{
+              const newMode=!voiceMode;
+              voiceModeRef.current=newMode;
+              if(!newMode){
+                stopSpeaking();
+              } else {
+                const lastMsg=messages.slice().reverse().find(m=>m.role==="assistant");
+                if(lastMsg) playTTS(lastMsg.content,true);
+              }
+              setVoiceMode(newMode);
+            }}>
             {voiceMode?"📵":"📞"}
             <span>{voiceMode?"Głos wl.":"Głosowy"}</span>
           </button>
